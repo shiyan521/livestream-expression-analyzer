@@ -1,0 +1,9 @@
+# Whisper ASR后端（免费本地转写）
+openai-whisper>=20231117
+pyannote.audio>=3.1
+
+# docx逐字稿解析
+python-docx>=1.1
+
+# 截图工具
+playwright>=1.40

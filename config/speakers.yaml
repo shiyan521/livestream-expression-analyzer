@@ -1,0 +1,14 @@
+# 说话人识别配置
+# 当没有用户提供逐字稿时，用关键词匹配自动识别目标说话人
+target_speaker:
+  name: "Speaker A"  # 改为你的名字
+  unique_keywords: []  # 改为你的独特关键词（权重x20）
+  general_keywords: []  # 通用关键词（权重x5）
+  reverse_keywords: []  # 反向关键词（出现则减分x15）
+
+# 示例配置（注释）:
+# target_speaker:
+#   name: "张三"
+#   unique_keywords: ["我的产品名", "我的公司名"]
+#   general_keywords: ["我觉得", "我个人"]
+#   reverse_keywords: ["别人的名字", "其他公司名"]

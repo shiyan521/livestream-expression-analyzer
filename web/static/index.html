@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Livestream Expression Analyzer - 直播表达分析器</title>
+<style>
+:root {
+  --bg: #F8F7F4;
+  --bg2: #EFEEE9;
+  --ink: #1A1A1A;
+  --muted: #7A756D;
+  --rule: #D6D3CC;
+  --accent: #E05A33;
+  --accent2: #2A7B5B;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+.nav .logo {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.nav .logo span {
+  color: var(--accent);
+}
+.nav .nav-link {
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav .nav-link:hover { color: var(--accent); }
+
+/* Hero */
+.hero {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 2rem;
+}
+.hero h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+  line-height: 1.25;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Upload Zone */
+.upload-section {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.upload-zone {
+  border: 2px dashed var(--rule);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: var(--bg2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.upload-zone:hover {
+  border-color: var(--accent);
+  background: #fff;
+}
+.upload-zone.dragover {
+  border-color: var(--accent);
+  background: #fff;
+  transform: scale(1.01);
+}
+.upload-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.upload-zone:hover .upload-icon { background: var(--accent); }
+.upload-icon svg {
+  width: 28px;
+  height: 28px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.upload-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--ink);
+}
+.upload-hint {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.upload-formats {
+  font-size: 0.8rem;
+  color: var(--muted);
+  opacity: 0.7;
+}
+.upload-zone input[type="file"] {
+  display: none;
+}
+
+/* Options */
+.options-section {
+  max-width: 580px;
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+}
+.option-group {
+  margin-bottom: 1rem;
+}
+.option-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.option-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+select.option-select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg2);
+  font-size: 0.92rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A756D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+}
+select.option-select:hover {
+  border-color: var(--accent);
+}
+select.option-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Transcript upload */
+.transcript-zone {
+  display: none;
+  border: 2px dashed var(--rule);
+  border-radius: 12px;
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  background: var(--bg2);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.transcript-zone.show {
+  display: block;
+}
+.transcript-zone:hover {
+  border-color: var(--accent2);
+  background: #fff;
+}
+.transcript-zone.dragover {
+  border-color: var(--accent2);
+  background: #fff;
+}
+.transcript-icon {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 0.5rem;
+  background: var(--accent2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.transcript-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.transcript-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.transcript-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.transcript-zone input[type="file"] {
+  display: none;
+}
+
+/* File info */
+.file-info {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--bg);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  text-align: left;
+}
+.file-info.show { display: block; }
+.file-info .fname {
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.file-info .fsize {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* Analyze button */
+.analyze-btn {
+  display: none;
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 1.2rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.analyze-btn.show {
+  display: block;
+}
+.analyze-btn:hover {
+  background: #c94e2c;
+  transform: translateY(-1px);
+}
+.analyze-btn:active {
+  transform: translateY(0);
+}
+.analyze-btn:disabled {
+  background: var(--rule);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Demo link */
+.demo-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+.demo-link a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.demo-link a:hover { color: var(--accent); }
+
+/* Analyzing overlay */
+.analyzing {
+  display: none;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.analyzing.show { display: block; }
+.analyzing-card {
+  background: var(--bg2);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.analyzing-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+}
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.steps {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.steps li.active {
+  color: var(--ink);
+  font-weight: 500;
+}
+.steps li.done {
+  color: var(--accent2);
+}
+.step-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--rule);
+  margin-right: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.steps li.active .step-icon {
+  background: var(--accent);
+  animation: pulse 1.2s infinite;
+}
+.steps li.done .step-icon {
+  background: var(--accent2);
+}
+.step-icon svg {
+  width: 12px;
+  height: 12px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224,90,51,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(224,90,51,0); }
+}
+
+/* Demo notice */
+.demo-notice {
+  display: none;
+  max-width: 580px;
+  margin: 1.5rem auto 0;
+  padding: 1rem 1.2rem;
+  background: #FFF3E0;
+  border: 1px solid #FFCC80;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #E65100;
+  line-height: 1.6;
+}
+.demo-notice.show { display: block; }
+
+/* Features */
+.features {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem 3rem;
+}
+.features h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+.features .section-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 2.5rem;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+.feature-card {
+  background: var(--bg2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s, background 0.2s;
+}
+.feature-card:hover {
+  transform: translateY(-2px);
+  background: #fff;
+}
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.feature-icon.green { background: var(--accent2); }
+.feature-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.feature-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--ink);
+}
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  border-top: 1px solid var(--rule);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer a:hover { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .nav, .hero, .features { padding-left: 1.2rem; padding-right: 1.2rem; }
+  .hero h1 { font-size: 1.8rem; }
+  .hero .subtitle { font-size: 0.95rem; }
+  .feature-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .upload-zone { padding: 2rem 1.2rem; }
+  .upload-section, .analyzing, .options-section { padding: 0 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">Expression<span>Analyzer</span></div>
+  <a href="report.html" class="nav-link">Demo 报告</a>
+</nav>
+
+<section class="hero">
+  <h1>上传你的音频，<br>获取<span class="accent">表达体检报告</span></h1>
+  <p class="subtitle">
+    开源的直播/播客口头表达能力分析系统。上传音频，自动生成 20 维度量化报告，精准定位口癖、语速、声学特征等表达问题，并提供可执行的改善建议。
+  </p>
+</section>
+
+<!-- Upload Section -->
+<div class="upload-section" id="uploadSection">
+  <div class="upload-zone" id="uploadZone">
+    <div class="upload-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+    </div>
+    <div class="upload-title">点击上传或拖拽音频文件</div>
+    <div class="upload-hint">支持 MP3、WAV、M4A、AAC、FLAC 格式</div>
+    <div class="upload-formats">建议时长 5-120 分钟</div>
+    <input type="file" id="fileInput" accept="audio/*,.mp3,.wav,.m4a,.aac,.flac">
+  </div>
+  <div class="file-info" id="fileInfo">
+    <div class="fname" id="fileName"></div>
+    <div class="fsize" id="fileSize"></div>
+  </div>
+</div>
+
+<!-- Options Section -->
+<div class="options-section" id="optionsSection" style="display:none;">
+  <!-- ASR Backend Selection -->
+  <div class="option-group">
+    <label class="option-label" for="asrBackend">ASR 转写后端</label>
+    <div class="option-desc">选择语音转文字的方式。如未安装对应后端，将返回 Demo 数据。</div>
+    <select class="option-select" id="asrBackend">
+      <option value="whisper">Whisper 本地转写（免费，需安装）</option>
+      <option value="transcript">逐字稿导入（推荐，最准确）</option>
+      <option value="bailian">阿里云百炼（付费，需配置 API Key）</option>
+    </select>
+  </div>
+
+  <!-- Transcript Upload (conditional) -->
+  <div class="option-group">
+    <div class="transcript-zone" id="transcriptZone">
+      <div class="transcript-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <div class="transcript-title">上传逐字稿文件（可选）</div>
+      <div class="transcript-hint">支持 JSON、TXT、DOCX、SRT 格式</div>
+      <input type="file" id="transcriptInput" accept=".json,.txt,.docx,.srt">
+    </div>
+    <div class="file-info" id="transcriptFileInfo">
+      <div class="fname" id="transcriptFileName"></div>
+      <div class="fsize" id="transcriptFileSize"></div>
+    </div>
+  </div>
+
+  <button class="analyze-btn" id="analyzeBtn">开始分析</button>
+</div>
+
+<!-- Demo Notice -->
+<div class="demo-notice" id="demoNotice"></div>
+
+<!-- Analyzing Section -->
+<div class="analyzing" id="analyzingSection">
+  <div class="analyzing-card">
+    <div class="analyzing-title" id="analyzingTitle">正在分析你的音频...</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <ul class="steps" id="stepsList">
+      <li id="step-0">
+        <span class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        语音转写与说话人识别
+      </li>
+      <li id="step-1">
+        <span class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        提取声学特征
+      </li>
+      <li id="step-2">
+        <span class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        分析语速句式
+      </li>
+      <li id="step-3">
+        <span class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        检测口癖
+      </li>
+      <li id="step-4">
+        <span class="step-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        生成报告
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="features">
+  <h2>六大核心能力</h2>
+  <p class="section-sub">全方位诊断你的口头表达</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="10 8 16 12 10 16 10 8"></polygon>
+        </svg>
+      </div>
+      <h3>综合评分</h3>
+      <p>雷达图展示音高、音量、语速、流畅度、清晰度、停顿六大维度得分</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green">
+        <svg viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <h3>口癖深度分析</h3>
+      <p>自动识别核心口癖和延伸词，分析组合模式与深层心理动机</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+      </div>
+      <h3>语速与句式</h3>
+      <p>按分钟追踪语速曲线，分析碎片率与句长分布，检测波动</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+        </svg>
+      </div>
+      <h3>声学特征</h3>
+      <p>音高（Hz）、音量动态范围（dB）、发音清晰度三维声学分析</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <h3>节奏与情绪</h3>
+      <p>停顿分布分析（短/中/长/超长）、情绪变化曲线追踪</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 3v18h18"></path>
+          <rect x="7" y="12" width="3" height="6"></rect>
+          <rect x="12" y="8" width="3" height="10"></rect>
+          <rect x="17" y="5" width="3" height="13"></rect>
+        </svg>
+      </div>
+      <h3>话题与热点</h3>
+      <p>按话题拆解表现差异，标记口癖高发时段，追踪历史趋势</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <a href="https://github.com/your-org/livestream-expression-analyzer" target="_blank">GitHub</a> · MIT License · Livestream Expression Analyzer
+</footer>
+
+<script>
+// 元素引用
+var uploadZone = document.getElementById('uploadZone');
+var fileInput = document.getElementById('fileInput');
+var uploadSection = document.getElementById('uploadSection');
+var optionsSection = document.getElementById('optionsSection');
+var analyzingSection = document.getElementById('analyzingSection');
+var fileInfo = document.getElementById('fileInfo');
+var fileName = document.getElementById('fileName');
+var fileSize = document.getElementById('fileSize');
+var progressFill = document.getElementById('progressFill');
+var analyzeBtn = document.getElementById('analyzeBtn');
+var asrBackend = document.getElementById('asrBackend');
+var transcriptZone = document.getElementById('transcriptZone');
+var transcriptInput = document.getElementById('transcriptInput');
+var transcriptFileInfo = document.getElementById('transcriptFileInfo');
+var transcriptFileName = document.getElementById('transcriptFileName');
+var transcriptFileSize = document.getElementById('transcriptFileSize');
+var demoNotice = document.getElementById('demoNotice');
+
+// 选中的文件
+var selectedAudioFile = null;
+var selectedTranscriptFile = null;
+
+// 文件大小格式化
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+// 音频文件上传 - 点击
+uploadZone.addEventListener('click', function() {
+  fileInput.click();
+});
+
+// 音频文件选择
+fileInput.addEventListener('change', function(e) {
+  if (e.target.files && e.target.files.length > 0) {
+    handleAudioFile(e.target.files[0]);
+  }
+});
+
+// 音频文件拖拽
+uploadZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
+uploadZone.addEventListener('dragleave', function(e) {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+});
+uploadZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    handleAudioFile(e.dataTransfer.files[0]);
+  }
+});
+
+// 处理音频文件选择
+function handleAudioFile(file) {
+  selectedAudioFile = file;
+  fileName.textContent = file.name;
+  fileSize.textContent = formatFileSize(file.size) + ' · ' + (file.type || '音频文件');
+  fileInfo.classList.add('show');
+
+  // 显示选项区域
+  optionsSection.style.display = 'block';
+  analyzeBtn.classList.add('show');
+
+  // 滚动到选项区域
+  setTimeout(function() {
+    optionsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+// ASR 后端切换 - 显示/隐藏逐字稿上传
+asrBackend.addEventListener('change', function() {
+  if (asrBackend.value === 'transcript') {
+    transcriptZone.classList.add('show');
+  } else {
+    transcriptZone.classList.remove('show');
+    // 清除已选逐字稿
+    selectedTranscriptFile = null;
+    transcriptInput.value = '';
+    transcriptFileInfo.classList.remove('show');
+  }
+});
+
+// 逐字稿文件上传 - 点击
+transcriptZone.addEventListener('click', function() {
+  transcriptInput.click();
+});
+
+// 逐字稿文件选择
+transcriptInput.addEventListener('change', function(e) {
+  if (e.target.files && e.target.files.length > 0) {
+    selectedTranscriptFile = e.target.files[0];
+    transcriptFileName.textContent = selectedTranscriptFile.name;
+    transcriptFileSize.textContent = formatFileSize(selectedTranscriptFile.size);
+    transcriptFileInfo.classList.add('show');
+  }
+});
+
+// 逐字稿文件拖拽
+transcriptZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  transcriptZone.classList.add('dragover');
+});
+transcriptZone.addEventListener('dragleave', function(e) {
+  e.preventDefault();
+  transcriptZone.classList.remove('dragover');
+});
+transcriptZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  transcriptZone.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    selectedTranscriptFile = e.dataTransfer.files[0];
+    transcriptFileName.textContent = selectedTranscriptFile.name;
+    transcriptFileSize.textContent = formatFileSize(selectedTranscriptFile.size);
+    transcriptFileInfo.classList.add('show');
+  }
+});
+
+// 开始分析
+analyzeBtn.addEventListener('click', function() {
+  if (!selectedAudioFile) {
+    alert('请先选择音频文件');
+    return;
+  }
+
+  if (asrBackend.value === 'transcript' && !selectedTranscriptFile) {
+    alert('选择"逐字稿导入"时必须上传逐字稿文件');
+    return;
+  }
+
+  startAnalysis();
+});
+
+// 分析流程
+function startAnalysis() {
+  uploadSection.style.display = 'none';
+  optionsSection.style.display = 'none';
+  analyzingSection.classList.add('show');
+
+  // 构建 FormData
+  var formData = new FormData();
+  formData.append('file', selectedAudioFile);
+  formData.append('asr_backend', asrBackend.value);
+  if (selectedTranscriptFile) {
+    formData.append('transcript', selectedTranscriptFile);
+  }
+
+  // 更新标题
+  var backendLabels = {
+    'whisper': 'Whisper 本地转写',
+    'transcript': '逐字稿导入',
+    'bailian': '阿里云百炼'
+  };
+  document.getElementById('analyzingTitle').textContent =
+    '正在分析（' + backendLabels[asrBackend.value] + '）...';
+
+  // 步骤动画
+  var steps = [
+    { name: '语音转写与说话人识别', duration: 400 },
+    { name: '提取声学特征', duration: 350 },
+    { name: '分析语速句式', duration: 300 },
+    { name: '检测口癖', duration: 250 },
+    { name: '生成报告', duration: 300 }
+  ];
+
+  var currentStep = 0;
+  var totalSteps = steps.length;
+
+  // 发送请求
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/analyze', true);
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      // 确保所有步骤完成
+      currentStep = totalSteps;
+      progressFill.style.width = '100%';
+
+      // 标记所有步骤为完成
+      for (var i = 0; i < totalSteps; i++) {
+        var el = document.getElementById('step-' + i);
+        if (el) {
+          el.classList.remove('active');
+          el.classList.add('done');
+        }
+      }
+
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+
+        // 如果返回了 Demo 数据，显示提示
+        if (response.is_demo) {
+          demoNotice.textContent = response.demo_reason || 'ASR 后端未安装，已返回 Demo 数据';
+          demoNotice.classList.add('show');
+        }
+
+        // 跳转到报告页
+        setTimeout(function() {
+          // 将数据存入 sessionStorage 供报告页使用
+          if (response.data) {
+            sessionStorage.setItem('reportData', JSON.stringify(response.data));
+          }
+          window.location.href = '/report';
+        }, 500);
+      } else {
+        var errorResp = {};
+        try { errorResp = JSON.parse(xhr.responseText); } catch(e) {}
+        alert('分析失败：' + (errorResp.error || '服务器错误'));
+        // 恢复上传界面
+        analyzingSection.classList.remove('show');
+        uploadSection.style.display = 'block';
+        optionsSection.style.display = 'block';
+      }
+    }
+  };
+
+  xhr.send(formData);
+
+  // 步骤动画
+  function runStep() {
+    if (currentStep >= totalSteps) return;
+
+    var stepEl = document.getElementById('step-' + currentStep);
+    if (stepEl) {
+      stepEl.classList.add('active');
+    }
+
+    var progressPercent = (currentStep / totalSteps) * 90;
+    progressFill.style.width = progressPercent + '%';
+
+    var duration = steps[currentStep].duration;
+
+    setTimeout(function() {
+      if (stepEl) {
+        stepEl.classList.remove('active');
+        stepEl.classList.add('done');
+      }
+      currentStep++;
+      runStep();
+    }, duration);
+  }
+
+  runStep();
+}
+</script>
+</body>
+</html>
