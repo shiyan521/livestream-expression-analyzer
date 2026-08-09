@@ -718,14 +718,19 @@ var reportRendered = false;
 function renderReport() {
   if (reportRendered) return;
   reportRendered = true;
-  window.addEventListener('DOMContentLoaded', function() {
+  var doRender = function() {
     if (isDemo) {
       var banner = document.getElementById('demoBanner');
       banner.textContent = '当前展示的是 Demo 数据。上传音频文件即可生成你的专属报告。';
       banner.classList.add('show');
     }
     render();
-  });
+  };
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', doRender);
+  } else {
+    doRender();
+  }
 }
 
 try {
