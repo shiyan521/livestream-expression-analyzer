@@ -1,0 +1,179 @@
+{
+  "meta": {
+    "session_id": "demo",
+    "duration_seconds": 4747,
+    "target_speaking_seconds": 4200,
+    "target_speaking_ratio": 0.885,
+    "analysis_timestamp": "2026-01-01 00:00:00"
+  },
+  "overall_score": 85.0,
+  "overall_level": "优秀",
+  "speakers": ["Speaker A", "Speaker B"],
+  "dimensions": {
+    "pitch_expression": 88,
+    "volume_dynamic": 85,
+    "speech_rate": 72,
+    "fluency": 78,
+    "clarity": 95,
+    "pause_control": 82
+  },
+  "filler_words": {
+    "core_total": 645,
+    "core_density_per_1000": 23.6,
+    "all_density_per_1000": 96.2,
+    "core_breakdown": [
+      {"word": "对吧", "count": 169, "density": 6.2},
+      {"word": "呃", "count": 98, "density": 3.6},
+      {"word": "那个", "count": 52, "density": 1.9},
+      {"word": "或者说", "count": 50, "density": 1.8},
+      {"word": "样一个", "count": 45, "density": 1.6},
+      {"word": "比如说", "count": 43, "density": 1.6},
+      {"word": "这样一个", "count": 41, "density": 1.5},
+      {"word": "到底", "count": 31, "density": 1.1},
+      {"word": "嘛", "count": 25, "density": 0.9},
+      {"word": "就是说", "count": 21, "density": 0.8},
+      {"word": "呢", "count": 21, "density": 0.8},
+      {"word": "嗯", "count": 18, "density": 0.7},
+      {"word": "这个这个", "count": 16, "density": 0.6},
+      {"word": "吧", "count": 15, "density": 0.5}
+    ],
+    "extended_breakdown": [
+      {"word": "这个", "count": 408},
+      {"word": "啊", "count": 371},
+      {"word": "那", "count": 276},
+      {"word": "就是", "count": 242},
+      {"word": "然后", "count": 167},
+      {"word": "可能", "count": 118},
+      {"word": "所以", "count": 109},
+      {"word": "的话", "count": 101},
+      {"word": "其实", "count": 56},
+      {"word": "还是", "count": 56}
+    ],
+    "combos": [
+      {"pattern": "就是说", "time": "04:01"},
+      {"pattern": "那这个", "time": "04:29"},
+      {"pattern": "就是说", "time": "05:25"},
+      {"pattern": "就是说", "time": "06:05"},
+      {"pattern": "就是说", "time": "06:16"},
+      {"pattern": "其实就", "time": "06:24"},
+      {"pattern": "那这个", "time": "06:30"},
+      {"pattern": "那这个", "time": "07:06"},
+      {"pattern": "那这个", "time": "08:51"},
+      {"pattern": "其实就", "time": "10:36"}
+    ]
+  },
+  "speech_rate": {
+    "mean_cpm": 414.4,
+    "median_cpm": 400.0,
+    "std_cpm": 77.6,
+    "cv": 0.187,
+    "series": [370, 360, 400, 385, 440, 365, 310, 395, 415, 375, 340, 390, 420, 455, 405, 375, 350, 395, 430, 375, 320, 355, 380, 400, 445, 385, 345, 370, 410, 395, 340, 365, 405, 390, 435, 365, 320, 375, 410, 380, 350, 370, 395, 365, 340]
+  },
+  "sentence_length": {
+    "mean": 41.4,
+    "median": 33.0,
+    "over_100": 31,
+    "under_10": 41,
+    "fragmentation_rate": 0.062,
+    "distribution": [
+      {"label": "正常句 (10-100字)", "value": 588},
+      {"label": "碎片句 (<10字)", "value": 41},
+      {"label": "超长句 (>100字)", "value": 31}
+    ]
+  },
+  "pauses": {
+    "median_gap_sec": 0.4,
+    "short_lt1s": 522,
+    "medium_1_3s": 109,
+    "long_3_5s": 16,
+    "extra_long_gt5s": 12
+  },
+  "acoustic": {
+    "pitch": {
+      "mean_hz": 159.2,
+      "median_hz": 132.3,
+      "std_hz": 95.1,
+      "score": 88
+    },
+    "energy": {
+      "mean_rms": 0.059,
+      "dynamic_range_db": 75.7,
+      "cv": 0.864,
+      "score": 85
+    },
+    "clarity": {
+      "score": 95
+    }
+  },
+  "emotion": {
+    "curve": [
+      {"time_range": "00:00-02:00", "score": 42.4},
+      {"time_range": "02:00-04:00", "score": 39.8},
+      {"time_range": "04:00-06:00", "score": 40.4},
+      {"time_range": "06:00-08:00", "score": 40.2},
+      {"time_range": "08:00-10:00", "score": 38.4},
+      {"time_range": "10:00-12:00", "score": 41.2},
+      {"time_range": "12:00-14:00", "score": 39.8},
+      {"time_range": "14:00-16:00", "score": 38.0},
+      {"time_range": "16:00-18:00", "score": 38.2},
+      {"time_range": "18:00-20:00", "score": 39.3},
+      {"time_range": "20:00-22:00", "score": 42.5},
+      {"time_range": "22:00-24:00", "score": 39.6},
+      {"time_range": "24:00-26:00", "score": 42.8},
+      {"time_range": "26:00-28:00", "score": 41.6},
+      {"time_range": "28:00-30:00", "score": 39.7},
+      {"time_range": "30:00-32:00", "score": 40.1},
+      {"time_range": "32:00-34:00", "score": 39.6},
+      {"time_range": "34:00-36:00", "score": 40.7},
+      {"time_range": "36:00-38:00", "score": 40.8},
+      {"time_range": "38:00-40:00", "score": 39.7},
+      {"time_range": "40:00-42:00", "score": 42.3},
+      {"time_range": "42:00-44:00", "score": 40.1},
+      {"time_range": "44:00-46:00", "score": 38.8},
+      {"time_range": "46:00-48:00", "score": 41.2},
+      {"time_range": "48:00-50:00", "score": 41.0},
+      {"time_range": "50:00-52:00", "score": 40.6},
+      {"time_range": "52:00-54:00", "score": 41.9},
+      {"time_range": "54:00-56:00", "score": 42.4},
+      {"time_range": "56:00-58:00", "score": 42.0},
+      {"time_range": "58:00-60:00", "score": 40.6},
+      {"time_range": "60:00-62:00", "score": 41.2},
+      {"time_range": "62:00-64:00", "score": 41.6},
+      {"time_range": "64:00-66:00", "score": 41.8},
+      {"time_range": "66:00-68:00", "score": 39.1},
+      {"time_range": "68:00-70:00", "score": 36.4},
+      {"time_range": "70:00-72:00", "score": 39.8},
+      {"time_range": "72:00-74:00", "score": 33.4},
+      {"time_range": "74:00-76:00", "score": 37.6},
+      {"time_range": "76:00-78:00", "score": 36.8}
+    ]
+  },
+  "topic_segments": [
+    {"topic": "开场介绍", "duration": "04:54", "filler_density": 2.0, "speech_rate": 370, "rating": "良好"},
+    {"topic": "话题一", "duration": "08:33", "filler_density": 2.8, "speech_rate": 395, "rating": "待改善"},
+    {"topic": "话题二", "duration": "09:57", "filler_density": 2.4, "speech_rate": 385, "rating": "良好"},
+    {"topic": "话题三", "duration": "02:59", "filler_density": 2.1, "speech_rate": 360, "rating": "良好"},
+    {"topic": "主体内容", "duration": "40:38", "filler_density": 2.2, "speech_rate": 410, "rating": "良好"},
+    {"topic": "互动问答", "duration": "01:11", "filler_density": 1.1, "speech_rate": 340, "rating": "优秀"},
+    {"topic": "话题四", "duration": "03:52", "filler_density": 4.1, "speech_rate": 430, "rating": "待改善"},
+    {"topic": "收尾总结", "duration": "00:30", "filler_density": 5.0, "speech_rate": 380, "rating": "待改善"}
+  ],
+  "filler_hotspots": [
+    {"time_range": "00:00-10:00", "density": 19.0, "note": "开场热身期"},
+    {"time_range": "10:00-20:00", "density": 16.3, "note": "进入节奏"},
+    {"time_range": "20:00-30:00", "density": 17.7, "note": "案例讲解"},
+    {"time_range": "30:00-40:00", "density": 17.5, "note": "稳定输出"},
+    {"time_range": "40:00-50:00", "density": 16.8, "note": "全晚最低"},
+    {"time_range": "50:00-60:00", "density": 17.0, "note": "维持稳定"},
+    {"time_range": "60:00-70:00", "density": 14.9, "note": "主体结束"},
+    {"time_range": "70:00-80:00", "density": 21.1, "note": "收尾+答疑"}
+  ],
+  "history": [
+    {"session": "session-01", "scene": "会议", "date": "2026-05", "overall_score": null, "core_density": 14.3, "speech_rate": 418.2, "fragmentation_rate": 0.037},
+    {"session": "session-02", "scene": "会议", "date": "2026-06-04", "overall_score": null, "core_density": 13.1, "speech_rate": 414.3, "fragmentation_rate": 0.061},
+    {"session": "session-03", "scene": "会议", "date": "2026-06-28", "overall_score": null, "core_density": 16.9, "speech_rate": 422.7, "fragmentation_rate": 0.071},
+    {"session": "session-04", "scene": "直播", "date": "2026-07-05", "overall_score": 80.8, "core_density": 38.5, "speech_rate": 404.3, "fragmentation_rate": 0.084},
+    {"session": "session-05", "scene": "连麦", "date": "2026-07-08", "overall_score": 83.8, "core_density": 41.6, "speech_rate": 361.7, "fragmentation_rate": 0.113},
+    {"session": "session-06", "scene": "直播", "date": "2026-07-12", "overall_score": 85.0, "core_density": 23.6, "speech_rate": 414.4, "fragmentation_rate": 0.062}
+  ]
+}
