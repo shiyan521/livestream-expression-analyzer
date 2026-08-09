@@ -25,3 +25,6 @@ test_*.json
 *_content_analysis.json
 0809_*.md
 
+# 本地启动脚本（含机器绝对路径）
+run_*.sh
+

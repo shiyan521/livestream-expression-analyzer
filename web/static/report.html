@@ -705,10 +705,28 @@ var defaultDemoData = {
 };
 
 // ============================================================
-// 加载数据：优先从 sessionStorage 读取，否则使用默认 Demo 数据
+// 加载数据（优先级）：
+//   1. URL 参数 ?data=xxx.json（静态托管/魔搭创空间演示模式）
+//   2. sessionStorage（本地分析流程写入）
+//   3. /api/demo（Flask 后端）
+//   4. 内置 Demo 数据
 // ============================================================
 var reportData = defaultDemoData;
 var isDemo = true;
+var reportRendered = false;
+
+function renderReport() {
+  if (reportRendered) return;
+  reportRendered = true;
+  window.addEventListener('DOMContentLoaded', function() {
+    if (isDemo) {
+      var banner = document.getElementById('demoBanner');
+      banner.textContent = '当前展示的是 Demo 数据。上传音频文件即可生成你的专属报告。';
+      banner.classList.add('show');
+    }
+    render();
+  });
+}
 
 try {
   var stored = sessionStorage.getItem('reportData');
@@ -723,32 +741,46 @@ try {
   // 解析失败，使用默认数据
 }
 
-// 如果是直接访问报告页（无 sessionStorage 数据），尝试从 API 加载
-if (!sessionStorage.getItem('reportData')) {
-  // 异步加载 Demo 数据
+var urlParams = new URLSearchParams(window.location.search);
+var dataParam = urlParams.get('data');
+
+if (dataParam) {
+  // 静态托管演示模式：加载指定 JSON 数据文件（如 live-analysis-0805.json）
+  fetch(dataParam)
+    .then(function(r) {
+      if (!r.ok) throw new Error('load failed');
+      return r.json();
+    })
+    .then(function(parsed) {
+      if (parsed && parsed.meta) {
+        reportData = parsed;
+        isDemo = false;
+      }
+      renderReport();
+    })
+    .catch(function() {
+      renderReport();
+    });
+} else if (!sessionStorage.getItem('reportData')) {
+  // 无本地数据：尝试从后端 API 加载 Demo 数据
   fetch('/api/demo')
     .then(function(r) { return r.json(); })
     .then(function(resp) {
       if (resp.success && resp.data) {
         reportData = resp.data;
         isDemo = true;
-        render();
+        renderReport();
+      } else {
+        renderReport();
       }
     })
     .catch(function() {
       // 使用默认数据
-      render();
+      renderReport();
     });
 } else {
   // 已有数据，直接渲染
-  window.addEventListener('DOMContentLoaded', function() {
-    if (isDemo) {
-      var banner = document.getElementById('demoBanner');
-      banner.textContent = '当前展示的是 Demo 数据。上传音频文件即可生成你的专属报告。';
-      banner.classList.add('show');
-    }
-    render();
-  });
+  renderReport();
 }
 
 // ============================================================

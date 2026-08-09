@@ -76,13 +76,19 @@ def run_whisper_pipeline(audio_path):
     return _run_analyze(audio_path, WhisperBackend(), "whisper")
 
 
-def run_transcript_pipeline(audio_path, transcript_path):
+def run_transcript_pipeline(audio_path, transcript_path, target_speaker="auto"):
     """
     使用用户上传的逐字稿 + 音频进行真实分析。
 
     逐字稿作为说话人分离与时间戳的 ground truth（最高准确度模式），
     音频用于声学特征提取。支持腾讯会议段落式、飞书妙记、
     标准单行及 JSON 四种逐字稿格式，自动检测。
+
+    Args:
+        audio_path: 音频文件路径
+        transcript_path: 逐字稿文件路径
+        target_speaker: 目标说话人 speaker_id（逐字稿中出现顺序编号，
+            从 0 开始）；默认 "auto" 自动选择主要说话人
 
     返回报告视图 dict 或 None（解析/分析失败时）。
     """
@@ -113,7 +119,7 @@ def run_transcript_pipeline(audio_path, transcript_path):
                 audio_path=audio_path,
                 asr_backend=backend,
                 speakers=speaker_count,
-                target_speaker="auto",
+                target_speaker=target_speaker,
                 output_path=os.path.join(workdir, "result.json"),
                 skip_asr=True,
                 asr_json=asr_json_path,

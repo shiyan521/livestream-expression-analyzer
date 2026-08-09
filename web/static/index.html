@@ -722,6 +722,36 @@ var demoNotice = document.getElementById('demoNotice');
 var selectedAudioFile = null;
 var selectedTranscriptFile = null;
 
+// 后端可用性：静态托管（魔搭创空间）时进入演示模式
+var isBackendAvailable = false;
+
+function enableDemoMode() {
+  demoNotice.innerHTML =
+    '当前为<strong>在线演示环境</strong>（静态托管），无法执行完整分析。' +
+    '查看已生成的真实直播分析案例：' +
+    '<a href="report.html?data=live-analysis-0805.json" ' +
+    'style="color:#E65100;font-weight:600;">0805 连麦直播分析报告 →</a><br>' +
+    '完整功能请在本地运行项目（见 GitHub 仓库 README）。';
+  demoNotice.classList.add('show');
+}
+
+// 探测后端：Flask 模式有 /api/demo，静态托管会失败
+fetch('/api/demo')
+  .then(function(r) {
+    if (!r.ok) throw new Error('static host');
+    return r.json();
+  })
+  .then(function(resp) {
+    if (resp && resp.success) {
+      isBackendAvailable = true;
+    } else {
+      enableDemoMode();
+    }
+  })
+  .catch(function() {
+    enableDemoMode();
+  });
+
 // 文件大小格式化
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -825,6 +855,11 @@ transcriptZone.addEventListener('drop', function(e) {
 
 // 开始分析
 analyzeBtn.addEventListener('click', function() {
+  if (!isBackendAvailable) {
+    alert('在线演示环境（静态托管）无法执行完整分析。\n\n请点击页面提示中的「0805 连麦直播分析报告」查看真实分析案例，或在本地运行项目体验完整功能。');
+    return;
+  }
+
   if (!selectedAudioFile) {
     alert('请先选择音频文件');
     return;
