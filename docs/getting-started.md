@@ -40,7 +40,7 @@ ffmpeg -version    # 应输出 ffmpeg 版本信息
 ### 1. Clone 项目
 
 ```bash
-git clone https://github.com/shiyan521/livestream-expression-analyzer.git
+git clone https://github.com/your-org/livestream-expression-analyzer.git
 cd livestream-expression-analyzer
 ```
 

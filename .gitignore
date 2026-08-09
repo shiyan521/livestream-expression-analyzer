@@ -19,3 +19,9 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+# 本地分析产物（含真实直播内容，不公开）
+test_*.json
+*_content_analysis.json
+0809_*.md
+

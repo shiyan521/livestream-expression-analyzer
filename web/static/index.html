@@ -547,7 +547,7 @@ select.option-select:focus {
   <!-- ASR Backend Selection -->
   <div class="option-group">
     <label class="option-label" for="asrBackend">ASR 转写后端</label>
-    <div class="option-desc">选择语音转文字的方式。如未安装对应后端，将返回 Demo 数据。</div>
+    <div class="option-desc">选择语音转文字的方式。逐字稿导入模式将使用音频 + 逐字稿执行真实分析。</div>
     <select class="option-select" id="asrBackend">
       <option value="whisper">Whisper 本地转写（免费，需安装）</option>
       <option value="transcript">逐字稿导入（推荐，最准确）</option>
@@ -567,8 +567,8 @@ select.option-select:focus {
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
       </div>
-      <div class="transcript-title">上传逐字稿文件（可选）</div>
-      <div class="transcript-hint">支持 JSON、TXT、DOCX、SRT 格式</div>
+      <div class="transcript-title">上传逐字稿文件（推荐，与音频一起分析）</div>
+      <div class="transcript-hint">支持腾讯会议/飞书妙记导出、JSON、TXT、DOCX、SRT 格式</div>
       <input type="file" id="transcriptInput" accept=".json,.txt,.docx,.srt">
     </div>
     <div class="file-info" id="transcriptFileInfo">

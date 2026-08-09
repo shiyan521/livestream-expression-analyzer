@@ -1,0 +1,105 @@
+# 内容分析配置文件
+#
+# 定义 LLM 分析用的 prompt 模板和分析参数。
+# 当 LLM 后端可用时，这些配置将被 ContentAnalyzer 使用。
+# 当 LLM 不可用时，自动降级为规则分析。
+
+# ─── LLM 后端选择 ───
+# auto: 自动选择可用的后端（优先 dashscope，其次 openai，最后 mock）
+# dashscope: 强制使用阿里云百炼
+# openai: 强制使用 OpenAI 兼容后端
+# mock: 强制使用模拟后端（纯规则分析）
+llm_backend: "auto"
+
+# DashScope 配置（阿里云百炼）
+dashscope:
+  model: "qwen-plus"
+  embedding_model: "text-embedding-v2"
+
+# OpenAI 兼容配置
+openai:
+  model: "gpt-4o-mini"
+  base_url: ""  # 留空则使用环境变量 OPENAI_BASE_URL
+
+# ─── 回应类型分类 prompt ───
+response_classification:
+  system_prompt: |
+    你是一个对话分析专家。你的任务是分析对话中回应者对提问的回应类型。
+    回应类型有四种：
+    - extend: 延展——接住对方内容并添加新信息或观点
+    - shift: 转移——切换话题或未回应对方的内容
+    - avoid: 回避——极短回应或敷衍
+    - repeat: 重复——重复已有内容，无新增信息
+    请只输出一个单词：extend、shift、avoid 或 repeat。
+  user_template: |
+    嘉宾说：{question}
+
+    主播回应：{response}
+
+    请分类这个回应的类型。
+
+# ─── 核心观点提取 prompt ───
+core_point_extraction:
+  system_prompt: |
+    你是一个内容分析专家。请从以下文本中提取核心观点。
+    输出 JSON 数组，每个元素包含：
+    - "point": 观点描述（一句话）
+    - "novelty": 新颖度 [0-1]，1表示全新观点，0表示常识
+    - "evidence_type": 论据类型，可选值: data/case/analogy/quote/personal_experience/none
+    只输出 JSON，不要其他文字。
+  user_template: "{text}"
+
+# ─── 论据类型检测 prompt ───
+evidence_type_detection:
+  system_prompt: |
+    你是一个内容分析专家。请判断以下文本主要使用的论据类型。
+    可选值: data(数据)、case(案例)、analogy(类比)、quote(引用)、personal_experience(个人经验)、none(无明显论据)
+    只输出一个词。
+  user_template: "{text}"
+
+# ─── 论证结构提取 prompt（认知层） ───
+argument_structure_extraction:
+  system_prompt: |
+    你是一个论证分析专家。请从以下文本中提取论证结构。
+    分析三个要素：
+    - claim: 主张（作者的核心观点）
+    - evidence: 论据（支撑主张的事实、数据、案例）
+    - conclusion: 结论（总结性判断）
+    输出 JSON，格式：
+    {"has_claim": true/false, "has_evidence": true/false, "has_conclusion": true/false, "completeness": 0.0-1.0}
+    completeness: 三要素齐全=1.0，两个=0.67，一个=0.33，零个=0
+    只输出 JSON，不要其他文字。
+  user_template: "{text}"
+
+# ─── 思维深度分类 prompt（认知层） ───
+thinking_depth_classification:
+  system_prompt: |
+    你是一个认知分析专家。请判断以下文本的思维深度层级。
+    四个层级：
+    - surface: 表面层——现象描述、事实陈述、个人经历、场景描述
+    - analysis: 分析层——因果推导、对比分析、逻辑拆解、原因探究
+    - synthesis: 综合层——框架构建、规律提炼、本质洞察、体系化思考
+    - meta: 元认知层——自我反思、认知校准、方法论探讨
+    请只输出一个单词：surface、analysis、synthesis 或 meta。
+  user_template: "{text}"
+
+# ─── 分析参数 ───
+parameters:
+  # 规则分类置信度低于此值时触发 LLM 分类
+  llm_confidence_threshold: 0.55
+
+  # 时间分段数量（将会话均分为 N 段计算趋势）
+  time_segments: 5
+
+  # 信息增量阈值
+  low_increment_threshold: 0.20
+  high_increment_threshold: 0.60
+
+  # 话题漂移检测：连续 shift 超过此次则视为漂移
+  topic_drift_consecutive: 2
+
+  # 最低回应长度（字符），低于此值不参与信息增量计算
+  min_response_chars: 10
+
+  # n-gram 大小（用于文本相似度计算）
+  ngram_size: 2

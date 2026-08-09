@@ -35,6 +35,9 @@ from analyzer.acoustic import (
     compute_clarity,
     compute_non_speech_events,
 )
+from analyzer.content_metrics import compute_content_metrics
+from analyzer.cognitive_metrics import compute_cognitive_metrics
+from analyzer.dialogue_parser import parse_dialogue
 from analyzer.emotion import compute_emotion_and_fatigue
 from analyzer.interaction import compute_interaction
 from analyzer.text_metrics import compute_text_metrics
@@ -386,6 +389,44 @@ def extract_speaker_audio(
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# 内容分析配置加载
+# ═══════════════════════════════════════════════════════════════════════════════
+def load_content_config(config_path: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """加载内容分析配置。
+
+    从 config/content_analysis.yaml 读取 LLM prompt 模板和分析参数。
+    如果配置文件不存在或读取失败，返回 None（使用代码默认值）。
+
+    Args:
+        config_path: 可选的配置目录路径。
+
+    Returns:
+        内容分析配置字典，或 None。
+    """
+    import os
+
+    try:
+        import yaml
+    except ImportError:
+        print("  警告: PyYAML 未安装，无法加载 content_analysis.yaml", file=sys.stderr)
+        return None
+
+    if config_path:
+        cdir = os.path.abspath(config_path)
+    else:
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        project_dir = os.path.dirname(module_dir)
+        cdir = os.path.join(project_dir, "config")
+
+    filepath = os.path.join(cdir, "content_analysis.yaml")
+    if not os.path.exists(filepath):
+        return None
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # 主分析管线
 # ═══════════════════════════════════════════════════════════════════════════════
 def analyze(
@@ -401,6 +442,8 @@ def analyze(
     asr_json: Optional[str] = None,
     skip_clips: bool = False,
     config_path: Optional[str] = None,
+    enable_content_analysis: bool = True,
+    llm_backend_name: str = "auto",
 ) -> Dict[str, Any]:
     """主分析管线：从音频到结构化 JSON 的全量分析。
 
@@ -413,7 +456,8 @@ def analyze(
     6. 情绪曲线 + 疲劳检测
     7. 互动节奏 + 非语音事件
     8. 话题分割 + 切片候选
-    9. 综合评分
+    9. 内容层分析（对话接球率/信息增量/内容深度/话题连贯性）
+    10. 综合评分
 
     Args:
         audio_path: 音频文件路径。
@@ -428,10 +472,14 @@ def analyze(
         asr_json: 已有的 ASR JSON 路径（配合 skip_asr 使用）。
         skip_clips: 是否跳过切片提取。
         config_path: 配置文件目录路径，None 则使用默认位置。
+        enable_content_analysis: 是否启用内容层分析（默认 True）。
+        llm_backend_name: LLM 后端名称，支持 "auto"/"dashscope"/"openai"/"mock"。
+            仅当 enable_content_analysis 为 True 时生效。
 
     Returns:
         分析结果字典，包含 meta, acoustic, text_metrics, emotion,
-        interaction, non_speech_events, topics, clip_candidates, scores。
+        interaction, non_speech_events, topics, clip_candidates, scores,
+        以及可选的 content_analysis 字段。
     """
     audio_path = os.path.abspath(audio_path)
     if not os.path.exists(audio_path):
@@ -540,6 +588,80 @@ def analyze(
         filler_config,
     )
 
+    # ── Step 10: 内容层分析 ──
+    content_analysis: Optional[Dict[str, Any]] = None
+    if enable_content_analysis and speakers >= 2:
+        print("[10] 内容层分析...")
+        try:
+            from analyzer.llm_analyzer import get_llm_backend
+
+            # 加载内容分析配置
+            content_cfg = load_content_config(config_path)
+
+            # 获取 LLM 后端
+            llm_backend = None
+            if content_cfg and content_cfg.get("llm_backend", "auto") != "mock":
+                backend_name = content_cfg.get("llm_backend", llm_backend_name)
+                llm_backend = get_llm_backend(backend_name)
+            elif llm_backend_name != "mock":
+                llm_backend = get_llm_backend(llm_backend_name)
+
+            # 提取 prompt 配置
+            prompt_config = None
+            if content_cfg:
+                prompt_config = {
+                    k: v for k, v in content_cfg.items()
+                    if k in ("response_classification", "core_point_extraction",
+                             "evidence_type_detection")
+                }
+
+            # 提取分析参数
+            params = content_cfg.get("parameters", {}) if content_cfg else {}
+            num_segments = params.get("time_segments", 5)
+
+            # 解析对话结构
+            dialogue_result = parse_dialogue(
+                sentences, target_sp,
+                llm_backend=llm_backend,
+                prompt_config=prompt_config.get("response_classification") if prompt_config else None,
+                llm_confidence_threshold=params.get("llm_confidence_threshold", 0.55),
+            )
+
+            # 计算内容层指标
+            content_analysis = compute_content_metrics(
+                sentences, target_sp,
+                dialogue_result=dialogue_result,
+                duration=asr_duration,
+                llm_backend=llm_backend,
+                config=prompt_config,
+                num_segments=num_segments,
+            )
+        except Exception as e:
+            print(f"  ⚠ 内容层分析失败: {e}", file=sys.stderr)
+            content_analysis = {"error": str(e)}
+    elif enable_content_analysis and speakers < 2:
+        print("[10] 内容层分析: 跳过（单人场无对话数据）")
+
+    # ── Step 11: 认知层分析 ──
+    cognitive_analysis: Optional[Dict[str, Any]] = None
+    if enable_content_analysis and speakers >= 2 and content_analysis and "error" not in content_analysis:
+        print("[11] 认知层分析...")
+        try:
+            cognitive_analysis = compute_cognitive_metrics(
+                sentences, target_sp,
+                dialogue_result=dialogue_result,
+                content_result=content_analysis,
+                duration=asr_duration,
+                llm_backend=llm_backend,
+                config=prompt_config,
+                num_segments=num_segments,
+            )
+        except Exception as e:
+            print(f"  ⚠ 认知层分析失败: {e}", file=sys.stderr)
+            cognitive_analysis = {"error": str(e)}
+    elif enable_content_analysis and speakers < 2:
+        print("[11] 认知层分析: 跳过（单人场无对话数据）")
+
     # ── 综合评分 ──
     scores: Dict[str, float] = {}
     f0_std = acoustic_summary["pitch"]["std_hz"]
@@ -591,6 +713,23 @@ def analyze(
     overall = sum(scores[k] * weights[k] for k in weights)
     scores["overall"] = safe_float(overall)
 
+    # 内容质量评分（独立于表达层评分）
+    if content_analysis and "summary" in content_analysis:
+        content_scores = content_analysis["summary"]
+        scores["content_quality"] = content_scores.get("content_quality_score", 0)
+        scores["catch_rate_score"] = content_scores.get("catch_rate_score", 0)
+        scores["information_density_score"] = content_scores.get("information_density_score", 0)
+        scores["content_depth_score"] = content_scores.get("content_depth_score", 0)
+        scores["topic_coherence_score"] = content_scores.get("topic_coherence_score", 0)
+
+    # 认知层评分（独立于表达层和内容层评分）
+    if cognitive_analysis and "summary" in cognitive_analysis:
+        cog_scores = cognitive_analysis["summary"]
+        scores["cognitive_quality"] = cog_scores.get("cognitive_quality_score", 0)
+        scores["argument_score"] = cog_scores.get("argument_score", 0)
+        scores["thinking_depth_score"] = cog_scores.get("thinking_depth_score", 0)
+        scores["cognitive_resilience_score"] = cog_scores.get("cognitive_resilience_score", 0)
+
     # ── 组装输出 JSON ──
     result: Dict[str, Any] = {
         "meta": {
@@ -622,6 +761,14 @@ def analyze(
         "scores": {k: safe_float(v) for k, v in scores.items()},
     }
 
+    # 内容层分析结果
+    if content_analysis is not None:
+        result["content_analysis"] = content_analysis
+
+    # 认知层分析结果
+    if cognitive_analysis is not None:
+        result["cognitive_analysis"] = cognitive_analysis
+
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
@@ -637,6 +784,17 @@ def analyze(
     print(f"  流畅度:     {scores['fluency']:.0f}")
     print(f"  发音清晰度: {scores['clarity']:.0f}")
     print(f"  停顿控制:   {scores['pause_control']:.0f}")
+    if "content_quality" in scores:
+        print(f"内容质量评分: {scores['content_quality']:.1f}/100")
+        print(f"  对话接球率:   {scores.get('catch_rate_score', 0):.0f}")
+        print(f"  信息增量密度: {scores.get('information_density_score', 0):.0f}")
+        print(f"  内容深度:     {scores.get('content_depth_score', 0):.0f}")
+        print(f"  话题连贯性:   {scores.get('topic_coherence_score', 0):.0f}")
+    if "cognitive_quality" in scores:
+        print(f"认知质量评分: {scores['cognitive_quality']:.1f}/100")
+        print(f"  论证完整性:   {scores.get('argument_score', 0):.0f}")
+        print(f"  思维深度:     {scores.get('thinking_depth_score', 0):.0f}")
+        print(f"  认知韧性:     {scores.get('cognitive_resilience_score', 0):.0f}")
     print(f"{'='*60}")
 
     return result
@@ -680,6 +838,14 @@ def main() -> None:
     parser.add_argument(
         "--config-dir", default=None, help="配置文件目录路径"
     )
+    parser.add_argument(
+        "--no-content-analysis", action="store_true",
+        help="跳过内容层分析（对话接球率/信息增量等）",
+    )
+    parser.add_argument(
+        "--llm-backend", default="auto",
+        help="LLM后端 (auto/dashscope/openai/mock，默认auto)",
+    )
     args = parser.parse_args()
 
     # 延迟导入 librosa（首次 import 较慢）
@@ -704,6 +870,8 @@ def main() -> None:
         asr_json=args.asr_json,
         skip_clips=args.skip_clips,
         config_path=args.config_dir,
+        enable_content_analysis=not args.no_content_analysis,
+        llm_backend_name=args.llm_backend,
     )
 
 

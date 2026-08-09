@@ -11,7 +11,7 @@
 
 1. **Clone 项目**
 ```bash
-git clone https://github.com/shiyan521/livestream-expression-analyzer.git
+git clone https://github.com/your-org/livestream-expression-analyzer.git
 cd livestream-expression-analyzer
 ```
 
@@ -184,7 +184,7 @@ git push origin gh-pages
 
 部署完成后，访问：
 ```
-https://shiyan521.github.io/livestream-expression-analyzer/
+https://your-username.github.io/livestream-expression-analyzer/
 ```
 
 ### GitHub Pages Demo 限制

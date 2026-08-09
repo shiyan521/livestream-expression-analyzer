@@ -15,6 +15,10 @@ livestream-expression-analyzer: 直播表达分析模块化包。
     - emotion: 情绪曲线与疲劳检测
     - interaction: 互动节奏（轮次、回应、打断、主导度）
     - topics: 话题分割与切片候选
+    - dialogue_parser: 对话结构解析（轮次构建、交换对识别、回应类型分类）
+    - llm_analyzer: LLM 分析抽象层（多后端支持、内容分析器）
+    - content_metrics: 内容层指标（对话接球率、信息增量密度、内容深度、话题连贯性）
+    - cognitive_metrics: 认知层指标（论证链追踪、思维深度评估、认知负荷与内容质量关联）
     - utils: 共享工具函数与配置加载
 
 用法示例:
@@ -49,8 +53,13 @@ from analyzer.acoustic import (
     compute_clarity,
     compute_non_speech_events,
 )
+from analyzer.content_metrics import compute_content_metrics
+from analyzer.cognitive_metrics import compute_cognitive_metrics
+from analyzer.cross_session import CrossSessionTracker
+from analyzer.dialogue_parser import parse_dialogue
 from analyzer.emotion import compute_emotion_and_fatigue
 from analyzer.interaction import compute_interaction
+from analyzer.llm_analyzer import ContentAnalyzer, LLMBackend, get_llm_backend
 from analyzer.pipeline import (
     analyze,
     auto_detect_speaker,
@@ -58,6 +67,7 @@ from analyzer.pipeline import (
     load_asr_json,
     run_asr,
 )
+from analyzer.report_generator import ReportGenerator
 from analyzer.text_metrics import compute_text_metrics
 from analyzer.topics import (
     auto_topic_label,
@@ -97,6 +107,17 @@ __all__ = [
     "compute_topics_and_clips",
     "auto_topic_label",
     "classify_structure",
+    # 内容层
+    "parse_dialogue",
+    "compute_content_metrics",
+    "get_llm_backend",
+    "ContentAnalyzer",
+    "LLMBackend",
+    # 认知层
+    "compute_cognitive_metrics",
+    # 跨场次
+    "CrossSessionTracker",
+    "ReportGenerator",
     # 工具
     "SR",
     "HOP",

@@ -7,3 +7,9 @@ python-docx>=1.1
 
 # 截图工具
 playwright>=1.40
+
+# LLM 内容分析后端（可选，未安装时自动降级为纯规则分析）
+# 阿里云百炼（DashScope）
+dashscope>=1.14
+# OpenAI 兼容后端
+openai>=1.0

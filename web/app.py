@@ -6,8 +6,11 @@ Livestream Expression Analyzer - Web 服务
 
 支持的 ASR 后端：
   - whisper:   使用 openai-whisper 本地转写（免费）
-  - transcript: 用户上传逐字稿文件导入
+  - transcript: 用户上传逐字稿文件导入（最准确，推荐）
   - bailian:   阿里云百炼 ASR 服务（需自行配置 API Key）
+
+分析管线已接入 analyzer.pipeline：上传文件后将执行真实的多维度分析，
+分析失败或依赖缺失时回退到内置 Demo 数据。
 
 启动方式：
     python web/app.py
@@ -16,10 +19,19 @@ Livestream Expression Analyzer - Web 服务
 
 import json
 import os
+import sys
 import tempfile
 import time
 
 from flask import Flask, jsonify, request, send_from_directory
+
+# 将项目根目录加入 sys.path，确保 analyzer / asr 包可导入
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from analyzer.pipeline import analyze as pipeline_analyze, load_asr_json  # noqa: E402
+from web.report_adapter import to_report_view  # noqa: E402
 
 app = Flask(__name__, static_folder="static")
 
@@ -52,39 +64,68 @@ def check_bailian_available():
 
 def run_whisper_pipeline(audio_path):
     """
-    使用 Whisper 本地转写 + pyannote 说话人分离，
-    然后调用分析管线生成报告。
+    使用 Whisper 本地转写 + 说话人分离，然后调用分析管线生成报告。
 
-    返回分析结果 dict 或 None（如果依赖缺失）。
+    返回报告视图 dict 或 None（如果依赖缺失或分析失败）。
     """
     try:
-        import whisper
+        from asr.whisper_backend import WhisperBackend
     except ImportError:
         return None
 
-    # TODO: 接入实际分析管线
-    # from analyze import analyze_expression
-    # result = analyze_expression(audio_path, diarization=diarization_data)
-    # return result
-
-    # 占位：实际项目中此处调用 analyze 模块
-    return None
+    return _run_analyze(audio_path, WhisperBackend(), "whisper")
 
 
 def run_transcript_pipeline(audio_path, transcript_path):
     """
-    使用用户上传的逐字稿文件进行分析。
-    逐字稿格式支持 ASR diarization JSON 或纯文本。
+    使用用户上传的逐字稿 + 音频进行真实分析。
 
-    返回分析结果 dict 或 None。
+    逐字稿作为说话人分离与时间戳的 ground truth（最高准确度模式），
+    音频用于声学特征提取。支持腾讯会议段落式、飞书妙记、
+    标准单行及 JSON 四种逐字稿格式，自动检测。
+
+    返回报告视图 dict 或 None（解析/分析失败时）。
     """
-    # TODO: 接入实际分析管线
-    # from analyze import analyze_expression
-    # result = analyze_expression(audio_path, transcript_path=transcript_path)
-    # return result
+    try:
+        from asr.transcript_import import TranscriptImportBackend
+    except ImportError:
+        return None
 
-    # 占位：实际项目中此处调用 analyze 模块
-    return None
+    with tempfile.TemporaryDirectory() as workdir:
+        try:
+            # 1. 逐字稿 → diarization JSON（说话人自动编号）
+            backend = TranscriptImportBackend()
+            diar = backend.transcribe(transcript_path)
+            if not diar["transcripts"][0]["sentences"]:
+                print("[transcript] 逐字稿解析失败：未找到有效句子")
+                return None
+
+            asr_json_path = os.path.join(workdir, "transcript_asr.json")
+            with open(asr_json_path, "w", encoding="utf-8") as f:
+                json.dump(diar, f, ensure_ascii=False, indent=2)
+
+            # 2. 统计实际说话人数量
+            sentences, _ = load_asr_json(asr_json_path)
+            speaker_count = len({s["speaker"] for s in sentences}) or 2
+
+            # 3. 调用主分析管线（跳过 ASR，逐字稿即 ground truth）
+            result = pipeline_analyze(
+                audio_path=audio_path,
+                asr_backend=backend,
+                speakers=speaker_count,
+                target_speaker="auto",
+                output_path=os.path.join(workdir, "result.json"),
+                skip_asr=True,
+                asr_json=asr_json_path,
+                skip_clips=True,
+                session_id="web",
+                enable_content_analysis=True,
+                llm_backend_name="auto",
+            )
+            return to_report_view(result)
+        except Exception as e:
+            print(f"[transcript] 分析失败: {e}")
+            return None
 
 
 def run_bailian_pipeline(audio_path):
@@ -92,18 +133,37 @@ def run_bailian_pipeline(audio_path):
     使用阿里云百炼 ASR 服务进行转写和分析。
     需要 DASHSCOPE_API_KEY 环境变量。
 
-    返回分析结果 dict 或 None。
+    返回报告视图 dict 或 None。
     """
     if not check_bailian_available():
         return None
+    try:
+        from asr.bailian_backend import BailianBackend
+    except ImportError:
+        return None
 
-    # TODO: 接入百炼 ASR + 分析管线
-    # from analyze import analyze_expression
-    # result = analyze_expression(audio_path, asr_backend="bailian")
-    # return result
+    return _run_analyze(audio_path, BailianBackend(), "bailian")
 
-    # 占位：实际项目中此处调用 analyze 模块
-    return None
+
+def _run_analyze(audio_path, asr_backend, backend_name):
+    """通用分析入口：ASR 转写 + 分析管线 + 报告视图转换。"""
+    with tempfile.TemporaryDirectory() as workdir:
+        try:
+            result = pipeline_analyze(
+                audio_path=audio_path,
+                asr_backend=asr_backend,
+                speakers=2,
+                target_speaker="auto",
+                output_path=os.path.join(workdir, "result.json"),
+                skip_clips=True,
+                session_id="web",
+                enable_content_analysis=True,
+                llm_backend_name="auto",
+            )
+            return to_report_view(result)
+        except Exception as e:
+            print(f"[{backend_name}] 分析失败: {e}")
+            return None
 
 
 @app.route("/")
