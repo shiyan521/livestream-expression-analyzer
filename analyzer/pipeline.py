@@ -700,7 +700,6 @@ def analyze(
                 interaction["note"] = ""
             interaction["note"] += " [逐字稿模式: 数据不可靠，段落间间隔含对方说话时间]"
             scores["pause_control"] = 0
-            scores["pause_control_note"] = "逐字稿模式不可用"
 
     weights = {
         "pitch_expressiveness": 0.20,
@@ -758,7 +757,10 @@ def analyze(
         "non_speech_events": non_speech,
         "topics": topics,
         "clip_candidates": clip_candidates[:10],
-        "scores": {k: safe_float(v) for k, v in scores.items()},
+        "scores": {
+            k: safe_float(v) if isinstance(v, (int, float)) else v
+            for k, v in scores.items()
+        },
     }
 
     # 内容层分析结果

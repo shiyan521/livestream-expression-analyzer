@@ -1,0 +1,542 @@
+{
+  "meta": {
+    "session_id": "web",
+    "duration_seconds": 7501,
+    "target_speaking_seconds": 2565,
+    "target_speaking_ratio": 0.342,
+    "analysis_timestamp": "2026-08-09 19:29:19"
+  },
+  "overall_score": 80.1,
+  "overall_level": "良好",
+  "speakers": [
+    "Speaker A",
+    "Speaker B"
+  ],
+  "dimensions": {
+    "pitch_expression": 100,
+    "volume_dynamic": 100,
+    "speech_rate": 100,
+    "fluency": 37,
+    "clarity": 97,
+    "pause_control": 0
+  },
+  "filler_words": {
+    "core_total": 264,
+    "core_density_per_1000": 19.3,
+    "all_density_per_1000": 70.9,
+    "core_breakdown": [
+      {
+        "word": "来去",
+        "count": 60,
+        "density": 4.4
+      },
+      {
+        "word": "那个",
+        "count": 54,
+        "density": 4.0
+      },
+      {
+        "word": "这样一个",
+        "count": 31,
+        "density": 2.3
+      },
+      {
+        "word": "样一个",
+        "count": 31,
+        "density": 2.3
+      },
+      {
+        "word": "或者说",
+        "count": 26,
+        "density": 1.9
+      },
+      {
+        "word": "比如说",
+        "count": 21,
+        "density": 1.5
+      },
+      {
+        "word": "对对",
+        "count": 12,
+        "density": 0.9
+      },
+      {
+        "word": "吧",
+        "count": 9,
+        "density": 0.7
+      },
+      {
+        "word": "就是说",
+        "count": 8,
+        "density": 0.6
+      },
+      {
+        "word": "到底",
+        "count": 8,
+        "density": 0.6
+      },
+      {
+        "word": "呢",
+        "count": 3,
+        "density": 0.2
+      },
+      {
+        "word": "嘛",
+        "count": 1,
+        "density": 0.1
+      },
+      {
+        "word": "呃",
+        "count": 0,
+        "density": 0.0
+      },
+      {
+        "word": "嗯",
+        "count": 0,
+        "density": 0.0
+      },
+      {
+        "word": "这个这个",
+        "count": 0,
+        "density": 0.0
+      }
+    ],
+    "extended_breakdown": [
+      {
+        "word": "这个",
+        "count": 133,
+        "density": 9.7
+      },
+      {
+        "word": "那",
+        "count": 124,
+        "density": 9.1
+      },
+      {
+        "word": "就是",
+        "count": 89,
+        "density": 6.5
+      },
+      {
+        "word": "然后",
+        "count": 78,
+        "density": 5.7
+      },
+      {
+        "word": "所以",
+        "count": 51,
+        "density": 3.7
+      },
+      {
+        "word": "其实",
+        "count": 47,
+        "density": 3.4
+      },
+      {
+        "word": "可能",
+        "count": 47,
+        "density": 3.4
+      },
+      {
+        "word": "还是",
+        "count": 45,
+        "density": 3.3
+      },
+      {
+        "word": "的话",
+        "count": 39,
+        "density": 2.9
+      },
+      {
+        "word": "确实",
+        "count": 15,
+        "density": 1.1
+      },
+      {
+        "word": "比较",
+        "count": 15,
+        "density": 1.1
+      },
+      {
+        "word": "你可以",
+        "count": 8,
+        "density": 0.6
+      },
+      {
+        "word": "啊",
+        "count": 6,
+        "density": 0.4
+      },
+      {
+        "word": "OK",
+        "count": 5,
+        "density": 0.4
+      },
+      {
+        "word": "你觉得",
+        "count": 2,
+        "density": 0.1
+      }
+    ],
+    "combos": [
+      {
+        "pattern": "对对对",
+        "time": "04:49"
+      },
+      {
+        "pattern": "就是说",
+        "time": "14:48"
+      },
+      {
+        "pattern": "就是说",
+        "time": "19:57"
+      },
+      {
+        "pattern": "其实就",
+        "time": "20:40"
+      },
+      {
+        "pattern": "就是说",
+        "time": "21:49"
+      },
+      {
+        "pattern": "其实就",
+        "time": "22:27"
+      },
+      {
+        "pattern": "对对对",
+        "time": "34:44"
+      },
+      {
+        "pattern": "就是说",
+        "time": "46:38"
+      },
+      {
+        "pattern": "其实就",
+        "time": "53:27"
+      },
+      {
+        "pattern": "对对对",
+        "time": "60:26"
+      }
+    ]
+  },
+  "speech_rate": {
+    "mean_cpm": 322.2,
+    "median_cpm": 312.6,
+    "std_cpm": 194.2,
+    "cv": 0.603,
+    "series": [
+      322,
+      322,
+      322,
+      322,
+      322,
+      322,
+      322,
+      322,
+      322,
+      322
+    ]
+  },
+  "sentence_length": {
+    "mean": 137.8,
+    "median": 114.0,
+    "over_100": 52,
+    "under_10": 16,
+    "fragmentation_rate": 0.162,
+    "distribution": [
+      {
+        "label": "正常句 (10-100字)",
+        "value": 31
+      },
+      {
+        "label": "碎片句 (<10字)",
+        "value": 16
+      },
+      {
+        "label": "超长句 (>100字)",
+        "value": 52
+      }
+    ]
+  },
+  "pauses": {
+    "median_gap_sec": 24.0,
+    "short_lt1s": 0,
+    "medium_1_3s": 7,
+    "long_3_5s": 10,
+    "extra_long_gt5s": 48
+  },
+  "acoustic": {
+    "pitch": {
+      "mean_hz": 213.8,
+      "median_hz": 164.7,
+      "std_hz": 126.4,
+      "score": 100
+    },
+    "energy": {
+      "mean_rms": 0.077,
+      "dynamic_range_db": 79.1,
+      "cv": 0.975,
+      "score": 100
+    },
+    "clarity": {
+      "score": 97
+    }
+  },
+  "emotion": {
+    "curve": [
+      {
+        "time_range": "00:00-02:00",
+        "score": 6.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 29.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 36.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.1
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 37.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.7
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 35.1
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 34.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 41.4
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.4
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 40.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 18.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 18.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 36.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 18.4
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 16.9
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.6
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.6
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 36.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 18.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 18.9
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.9
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 41.7
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 40.1
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 19.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 34.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 41.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.4
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 37.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 30.3
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 33.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 33.7
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 43.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 17.5
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 31.9
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 40.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 38.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 31.0
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 37.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 41.2
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 36.7
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 39.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 37.1
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 31.8
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 28.4
+      },
+      {
+        "time_range": "00:00-02:00",
+        "score": 36.1
+      }
+    ]
+  },
+  "topic_segments": [],
+  "filler_hotspots": [],
+  "history": []
+}

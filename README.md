@@ -42,6 +42,13 @@ Livestream Expression Analyzer 是一个开源的口头表达分析工具，专�
 | 19 | 认知负荷分析 | 话题切换时的认知负荷变化 |
 | 20 | 即兴表达原理 | 基于即兴表达理论的评估 |
 
+## 在线演示
+
+| 入口 | 链接 | 说明 |
+|------|------|------|
+| GitHub Pages | [shiyan521.github.io/livestream-expression-analyzer](https://shiyan521.github.io/livestream-expression-analyzer/) | 静态演示站：首页 + 报告页，含 0805 真实直播分析案例 |
+| 魔搭创空间 | 待发布 | 静态演示站（同上内容，国内访问更快） |
+
 ## 截图
 
 <!-- 截图占位符 - 请将截图放入 docs/images/ 目录 -->
