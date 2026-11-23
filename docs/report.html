@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>表达分析报告 - Livestream Expression Analyzer</title>
+<title>口头表达体检报告 - 开口说Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
 :root {
@@ -100,11 +100,6 @@ body {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--accent);
-}
-.report-speaker {
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin-top: 0.3rem;
 }
 
 /* Filler word highlight */
@@ -350,19 +345,6 @@ body {
   line-height: 1.9;
 }
 
-/* Demo banner */
-.demo-banner {
-  background: #FFF3E0;
-  border: 1px solid #FFCC80;
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.85rem;
-  color: #E65100;
-  display: none;
-}
-.demo-banner.show { display: block; }
-
 /* Footer */
 .report-footer {
   text-align: center;
@@ -392,9 +374,6 @@ body {
   <div class="logo">开口说<span>Pro</span></div>
 </nav>
 
-<!-- Demo banner (shown when data is demo) -->
-<div class="demo-banner" id="demoBanner"></div>
-
 <!-- 1. Header (score ring) -->
 <div class="report-header">
   <h1>口头表达体检报告</h1>
@@ -407,7 +386,6 @@ body {
   </div>
   <div class="report-meta" id="reportMeta">音频时长：-- · --字</div>
   <div class="report-level" id="reportLevel">表达水平：--</div>
-  <div class="report-speaker" id="reportSpeaker"></div>
 </div>
 
 <!-- 2. 综合评分 -->
@@ -518,23 +496,22 @@ body {
 </div>
 
 <!-- 12. Footer -->
-<div class="report-footer" id="reportFooter">Livestream Expression Analyzer · Demo 报告</div>
+<div class="report-footer" id="reportFooter">由 开口说Pro 生成 · Demo 报告</div>
 
 <script>
 // ============================================================
-// 默认 Demo 数据（与 demo-data.json 一致，脱敏版）
+// Data from demo-data.json - embedded directly (no fetch)
 // ============================================================
-var defaultDemoData = {
+var reportData = {
   "meta": {
-    "session_id": "demo",
+    "session_id": "demo-0712",
     "duration_seconds": 4747,
     "target_speaking_seconds": 4200,
     "target_speaking_ratio": 0.885,
-    "analysis_timestamp": "2026-01-01 00:00:00"
+    "analysis_timestamp": "2026-07-12 21:44:38"
   },
   "overall_score": 85.0,
   "overall_level": "优秀",
-  "speakers": ["Speaker A", "Speaker B"],
   "dimensions": {
     "pitch_expression": 88,
     "volume_dynamic": 85,
@@ -548,7 +525,7 @@ var defaultDemoData = {
     "core_density_per_1000": 23.6,
     "all_density_per_1000": 96.2,
     "core_breakdown": [
-      {"word": "对吧", "count": 169, "density": 6.2},
+      {"word": "来去", "count": 169, "density": 6.2},
       {"word": "呃", "count": 98, "density": 3.6},
       {"word": "那个", "count": 52, "density": 1.9},
       {"word": "或者说", "count": 50, "density": 1.8},
@@ -676,12 +653,12 @@ var defaultDemoData = {
   },
   "topic_segments": [
     {"topic": "开场介绍", "duration": "04:54", "filler_density": 2.0, "speech_rate": 370, "rating": "良好"},
-    {"topic": "话题一", "duration": "08:33", "filler_density": 2.8, "speech_rate": 395, "rating": "待改善"},
-    {"topic": "话题二", "duration": "09:57", "filler_density": 2.4, "speech_rate": 385, "rating": "良好"},
-    {"topic": "话题三", "duration": "02:59", "filler_density": 2.1, "speech_rate": 360, "rating": "良好"},
+    {"topic": "产品体验分享", "duration": "08:33", "filler_density": 2.8, "speech_rate": 395, "rating": "待改善"},
+    {"topic": "赚钱讨论", "duration": "09:57", "filler_density": 2.4, "speech_rate": 385, "rating": "良好"},
+    {"topic": "身份变化", "duration": "02:59", "filler_density": 2.1, "speech_rate": 360, "rating": "良好"},
     {"topic": "主体内容", "duration": "40:38", "filler_density": 2.2, "speech_rate": 410, "rating": "良好"},
     {"topic": "互动问答", "duration": "01:11", "filler_density": 1.1, "speech_rate": 340, "rating": "优秀"},
-    {"topic": "话题四", "duration": "03:52", "filler_density": 4.1, "speech_rate": 430, "rating": "待改善"},
+    {"topic": "AI工具讨论", "duration": "03:52", "filler_density": 4.1, "speech_rate": 430, "rating": "待改善"},
     {"topic": "收尾总结", "duration": "00:30", "filler_density": 5.0, "speech_rate": 380, "rating": "待改善"}
   ],
   "filler_hotspots": [
@@ -695,101 +672,17 @@ var defaultDemoData = {
     {"time_range": "70:00-80:00", "density": 21.1, "note": "收尾+答疑"}
   ],
   "history": [
-    {"session": "session-01", "scene": "会议", "date": "2026-05", "overall_score": null, "core_density": 14.3, "speech_rate": 418.2, "fragmentation_rate": 0.037},
-    {"session": "session-02", "scene": "会议", "date": "2026-06-04", "overall_score": null, "core_density": 13.1, "speech_rate": 414.3, "fragmentation_rate": 0.061},
-    {"session": "session-03", "scene": "会议", "date": "2026-06-28", "overall_score": null, "core_density": 16.9, "speech_rate": 422.7, "fragmentation_rate": 0.071},
-    {"session": "session-04", "scene": "直播", "date": "2026-07-05", "overall_score": 80.8, "core_density": 38.5, "speech_rate": 404.3, "fragmentation_rate": 0.084},
-    {"session": "session-05", "scene": "连麦", "date": "2026-07-08", "overall_score": 83.8, "core_density": 41.6, "speech_rate": 361.7, "fragmentation_rate": 0.113},
-    {"session": "session-06", "scene": "直播", "date": "2026-07-12", "overall_score": 85.0, "core_density": 23.6, "speech_rate": 414.4, "fragmentation_rate": 0.062}
+    {"session": "05tx", "scene": "腾讯会议", "date": "2026-05", "overall_score": null, "core_density": 14.3, "speech_rate": 418.2, "fragmentation_rate": 0.037},
+    {"session": "0604tx", "scene": "腾讯会议", "date": "2026-06-04", "overall_score": null, "core_density": 13.1, "speech_rate": 414.3, "fragmentation_rate": 0.061},
+    {"session": "0628tx", "scene": "腾讯会议", "date": "2026-06-28", "overall_score": null, "core_density": 16.9, "speech_rate": 422.7, "fragmentation_rate": 0.071},
+    {"session": "0705", "scene": "付费直播", "date": "2026-07-05", "overall_score": 80.8, "core_density": 38.5, "speech_rate": 404.3, "fragmentation_rate": 0.084},
+    {"session": "0708", "scene": "连麦", "date": "2026-07-08", "overall_score": 83.8, "core_density": 41.6, "speech_rate": 361.7, "fragmentation_rate": 0.113},
+    {"session": "0712", "scene": "直播", "date": "2026-07-12", "overall_score": 85.0, "core_density": 23.6, "speech_rate": 414.4, "fragmentation_rate": 0.062}
   ]
 };
 
 // ============================================================
-// 加载数据（优先级）：
-//   1. URL 参数 ?data=xxx.json（静态托管/魔搭创空间演示模式）
-//   2. sessionStorage（本地分析流程写入）
-//   3. /api/demo（Flask 后端）
-//   4. 内置 Demo 数据
-// ============================================================
-var reportData = defaultDemoData;
-var isDemo = true;
-var reportRendered = false;
-
-function renderReport() {
-  if (reportRendered) return;
-  reportRendered = true;
-  var doRender = function() {
-    if (isDemo) {
-      var banner = document.getElementById('demoBanner');
-      banner.textContent = '当前展示的是 Demo 数据。上传音频文件即可生成你的专属报告。';
-      banner.classList.add('show');
-    }
-    render();
-  };
-  if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', doRender);
-  } else {
-    doRender();
-  }
-}
-
-try {
-  var stored = sessionStorage.getItem('reportData');
-  if (stored) {
-    var parsed = JSON.parse(stored);
-    if (parsed && parsed.meta) {
-      reportData = parsed;
-      isDemo = false;
-    }
-  }
-} catch(e) {
-  // 解析失败，使用默认数据
-}
-
-var urlParams = new URLSearchParams(window.location.search);
-var dataParam = urlParams.get('data');
-
-if (dataParam) {
-  // 静态托管演示模式：加载指定 JSON 数据文件（如 live-analysis-0805.json）
-  fetch(dataParam)
-    .then(function(r) {
-      if (!r.ok) throw new Error('load failed');
-      return r.json();
-    })
-    .then(function(parsed) {
-      if (parsed && parsed.meta) {
-        reportData = parsed;
-        isDemo = false;
-      }
-      renderReport();
-    })
-    .catch(function() {
-      renderReport();
-    });
-} else if (!sessionStorage.getItem('reportData')) {
-  // 无本地数据：尝试从后端 API 加载 Demo 数据
-  fetch('/api/demo')
-    .then(function(r) { return r.json(); })
-    .then(function(resp) {
-      if (resp.success && resp.data) {
-        reportData = resp.data;
-        isDemo = true;
-        renderReport();
-      } else {
-        renderReport();
-      }
-    })
-    .catch(function() {
-      // 使用默认数据
-      renderReport();
-    });
-} else {
-  // 已有数据，直接渲染
-  renderReport();
-}
-
-// ============================================================
-// 颜色变量
+// Color variables
 // ============================================================
 var accent = '#E05A33';
 var accent2 = '#2A7B5B';
@@ -800,7 +693,7 @@ var ink = '#1A1A1A';
 var charts = [];
 
 // ============================================================
-// 图表初始化辅助函数
+// Chart init helper
 // ============================================================
 function initChart(id, opt) {
   var el = document.getElementById(id);
@@ -812,19 +705,19 @@ function initChart(id, opt) {
 }
 
 // ============================================================
-// 主渲染函数
+// Global render function
 // ============================================================
 function render() {
   var d = reportData;
 
-  // ---- 辅助函数：秒数转 mm分ss秒 ----
+  // ---- Helper: format seconds to mm分ss秒 ----
   function fmtDuration(sec) {
     var m = Math.floor(sec / 60);
     var s = sec % 60;
     return m + '分' + (s < 10 ? '0' : '') + s + '秒';
   }
 
-  // ---- 1. Header (评分环) ----
+  // ---- 1. Header (score ring) ----
   var durationStr = fmtDuration(d.meta.duration_seconds);
   var wordCount = Math.round(d.filler_words.core_total / d.filler_words.core_density_per_1000 * 1000);
 
@@ -832,19 +725,14 @@ function render() {
   document.getElementById('reportMeta').textContent = '音频时长：' + durationStr + ' · ' + wordCount.toLocaleString() + '字';
   document.getElementById('reportLevel').textContent = '表达水平：' + d.overall_level;
 
-  // 显示说话人
-  if (d.speakers && d.speakers.length > 0) {
-    document.getElementById('reportSpeaker').textContent = '说话人：' + d.speakers.join(' / ');
-  }
-
-  // 评分环动画
+  // Score ring animation
   var ring = document.getElementById('scoreRing');
   var circumference = 2 * Math.PI * 55;
   ring.style.strokeDasharray = circumference;
   var offset = circumference * (1 - d.overall_score / 100);
   setTimeout(function() { ring.style.strokeDashoffset = offset; }, 200);
 
-  // ---- 2. 综合评分 (雷达图) ----
+  // ---- 2. 综合评分 (radar) ----
   var radarDimNames = ['音高表现力', '音量动态', '语速合理性', '流畅度', '发音清晰度', '停顿控制'];
   var radarScores = [
     d.dimensions.pitch_expression,
@@ -856,7 +744,7 @@ function render() {
   ];
 
   document.getElementById('insightOverall').innerHTML =
-    '发音清晰度表现最佳（<strong>' + d.dimensions.clarity + '分</strong>），音高和音量也有不错表现力。流畅度<strong style="color:#E05A33">' + d.dimensions.fluency + '分</strong>仍有提升空间，核心口癖密度偏高（<span class="fw">' + d.filler_words.core_density_per_1000 + '/千字</span>）。语速均值<strong>' + d.speech_rate.mean_cpm + '字/分</strong>略偏快，音量动态范围<strong>' + d.acoustic.energy.dynamic_range_db + 'dB</strong>表现良好。';
+    '发音清晰度表现最佳（<strong>95分</strong>），音高和音量也有不错表现力。流畅度<strong style="color:#E05A33">78分</strong>仍有提升空间，核心口癖密度偏高（<span class="fw">23.6/千字</span>）。语速均值<strong>414字/分</strong>略偏快，音量动态范围<strong>75.7dB</strong>表现良好。';
 
   initChart('chartRadar', {
     animation: false,
@@ -892,7 +780,7 @@ function render() {
   var densityLabel = d.filler_words.core_density_per_1000 > 20 ? '偏高' : (d.filler_words.core_density_per_1000 < 15 ? '优秀' : '良好');
   document.getElementById('coreDensityLabel').textContent = densityLabel;
 
-  // 核心口癖柱状图
+  // Core fillers bar chart
   var habitColors = [accent, accent + 'cc', accent + 'aa', accent + '88', accent + '77', accent + '66', accent + '55', accent2 + '88', accent2 + '77', accent2 + '66', accent2 + '55', muted + '88', muted + '77', muted + '66'];
   var coreSorted = d.filler_words.core_breakdown.slice().sort(function(a, b) { return a.count - b.count; });
   initChart('chartHabit', {
@@ -918,7 +806,7 @@ function render() {
     }]
   });
 
-  // 延伸词柱状图
+  // Extended fillers bar chart
   var extSorted = d.filler_words.extended_breakdown.slice().sort(function(a, b) { return a.count - b.count; });
   var fillerColors = [accent, accent + 'cc', accent + 'aa', accent + '88', accent + '77', accent + '66', accent + '55', accent2 + '88', accent2 + '77', accent2 + '66'];
   initChart('chartFiller', {
@@ -944,7 +832,7 @@ function render() {
     }]
   });
 
-  // 组合模式
+  // Combo patterns
   var comboMap = {};
   d.filler_words.combos.forEach(function(c) {
     comboMap[c.pattern] = (comboMap[c.pattern] || 0) + 1;
@@ -954,15 +842,8 @@ function render() {
   }).join(' · ');
   document.getElementById('comboPatterns').textContent = comboList || '无';
 
-  // 口癖洞察
-  var topFiller = d.filler_words.core_breakdown[0];
-  var secondFiller = d.filler_words.core_breakdown[1];
-  var thirdFiller = d.filler_words.core_breakdown[2];
-  var topExtended = d.filler_words.extended_breakdown[0];
-  var secondExtended = d.filler_words.extended_breakdown[1];
-
   document.getElementById('insightFiller').innerHTML =
-    '核心口癖<span class="fw">' + topFiller.word + '</span>出现' + topFiller.count + '次远超其他词，是最显著的口头习惯。<span class="fw">' + secondFiller.word + '</span>（' + secondFiller.count + '次）和<span class="fw">' + thirdFiller.word + '</span>（' + thirdFiller.count + '次）属于典型"思考型"口癖。延伸词中<span class="fw">' + topExtended.word + '</span>（' + topExtended.count + '次）和<span class="fw">' + secondExtended.word + '</span>（' + secondExtended.count + '次）使用频率极高，整体口癖密度偏高，建议重点控制。';
+    '核心口癖<span class="fw">来去</span>出现169次远超其他词，是最显著的口头习惯。<span class="fw">呃</span>（98次）和<span class="fw">那个</span>（52次）属于典型"思考型"口癖。延伸词中<span class="fw">这个</span>（408次）和<span class="fw">啊</span>（371次）使用频率极高，整体口癖密度偏高，建议重点控制。';
 
   // ---- 4. 语速与句式 ----
   document.getElementById('speedStats').innerHTML =
@@ -1003,7 +884,7 @@ function render() {
     }]
   });
 
-  // 句长分布
+  // Sentence distribution
   initChart('chartSentence', {
     animation: false,
     tooltip: { appendToBody: true },
@@ -1032,11 +913,10 @@ function render() {
   document.getElementById('fragmentRate').textContent = '碎片率：' + fragRate + '%（警戒线 15%）';
 
   document.getElementById('insightSpeed').innerHTML =
-    '语速均值<strong>' + d.speech_rate.mean_cpm + '字/分</strong>偏快（推荐300-360），变异系数<strong>' + d.speech_rate.cv + '</strong>说明波动尚在合理范围。碎片率<strong>' + fragRate + '%</strong>低于警戒线15%，句长分布较为健康。超长句' + d.sentence_length.over_100 + '句需注意适当断句。';
+    '语速均值<strong>414字/分</strong>偏快（推荐300-360），变异系数<strong>0.187</strong>说明波动尚在合理范围。碎片率<strong>6.2%</strong>低于警戒线15%，句长分布较为健康。超长句31句需注意适当断句。';
 
   // ---- 5. 声学特征 ----
   var acousticContainer = document.getElementById('acousticContainer');
-  acousticContainer.innerHTML = '';
   var acousticItems = [
     {
       key: 'pitch',
@@ -1071,7 +951,7 @@ function render() {
     acousticContainer.insertAdjacentHTML('beforeend', html);
   });
 
-  // 声学条动画
+  // Animate acoustic bars
   setTimeout(function() {
     var bars = acousticContainer.querySelectorAll('.acoustic-bar-fill');
     var scores = [d.acoustic.pitch.score, d.acoustic.energy.score, d.acoustic.clarity.score];
@@ -1109,7 +989,7 @@ function render() {
     }]
   });
 
-  // 情绪曲线
+  // Emotion curve
   var emotionCurve = d.emotion.curve.map(function(c) { return c.score / 100; });
   var emotionLabels = d.emotion.curve.map(function(_, i) { return (i + 1) + ''; });
   initChart('chartEmotion', {
@@ -1143,11 +1023,10 @@ function render() {
   });
 
   document.getElementById('insightRhythm').innerHTML =
-    '碎片率<strong>' + fragRate2 + '%</strong>远低于警戒线15%，整体表现健康。停顿以短停顿为主（80%），停顿中位数仅<strong>' + d.pauses.median_gap_sec + '秒</strong>（低于理想值1秒），缺少让听众消化信息的中长停顿。建议在关键观点后增加1-2秒停顿。';
+    '碎片率<strong>6.2%</strong>远低于警戒线15%，整体表现健康。停顿以短停顿为主（80%），停顿中位数仅<strong>0.4秒</strong>（低于理想值1秒），缺少让听众消化信息的中长停顿。建议在关键观点后增加1-2秒停顿。';
 
   // ---- 7. 话题表现 ----
   var tbody = document.getElementById('topicTableBody');
-  tbody.innerHTML = '';
   d.topic_segments.forEach(function(t) {
     var ratingClass = t.rating === '优秀' ? 'tag-excellent' : (t.rating === '良好' ? 'tag-good' : 'tag-poor');
     var row = '<tr>' +
@@ -1160,17 +1039,8 @@ function render() {
     tbody.insertAdjacentHTML('beforeend', row);
   });
 
-  // 话题洞察 - 动态生成
-  var poorTopics = d.topic_segments.filter(function(t) { return t.rating === '待改善'; });
-  var bestTopic = d.topic_segments.reduce(function(prev, curr) {
-    return prev.filler_density < curr.filler_density ? prev : curr;
-  });
-  var poorTopicNames = poorTopics.map(function(t) { return t.topic; }).join('和');
-  var poorTopicDensities = poorTopics.map(function(t) { return t.filler_density; }).join('和');
-
   document.getElementById('insightTopics').innerHTML =
-    '主体内容占据大部分时间，表现稳定。' + (poorTopics.length > 0 ? poorTopicNames + '口癖密度偏高（<strong style="color:#E05A33">' + poorTopicDensities + '</strong>），' : '') +
-    bestTopic.topic + '表现最好（密度仅' + bestTopic.filler_density + '）。准备充分的话题表现优于临场发挥的话题。';
+    '主体内容（40:38）占据大部分时间，表现稳定。AI工具讨论和收尾总结口癖密度偏高（<strong style="color:#E05A33">4.1和5.0</strong>），互动问答表现最好（密度仅1.1）。准备充分的话题表现优于临场发挥的话题。';
 
   // ---- 8. 口癖热点分析 ----
   var hotspotData = d.filler_hotspots.map(function(h) { return h.density; });
@@ -1214,13 +1084,8 @@ function render() {
     }]
   });
 
-  // 热点洞察 - 动态生成
-  var maxHotspot = d.filler_hotspots.reduce(function(prev, curr) { return curr.density > prev.density ? curr : prev; });
-  var minHotspot = d.filler_hotspots.reduce(function(prev, curr) { return curr.density < prev.density ? curr : prev; });
-  var firstHotspot = d.filler_hotspots[0];
-
   document.getElementById('hotspotText').innerHTML =
-    '开场（' + firstHotspot.time_range + '）口癖密度较高（<strong>' + firstHotspot.density + '/千字</strong>），属于正常热身期。中场（' + minHotspot.time_range + '）表现最佳（' + minHotspot.density + '/千字）。收尾阶段（' + maxHotspot.time_range + '）密度明显回升（<strong>' + maxHotspot.density + '/千字</strong>），可能因疲劳导致自控力下降。整体波动幅度适中，说明表达习惯较为稳定。';
+    '开场（0-10分钟）口癖密度较高（<strong>19.0/千字</strong>），属于正常热身期。中场（60-70分钟）表现最佳（14.9/千字）。收尾阶段（70-80分钟）密度明显回升（<strong>21.1/千字</strong>），可能因疲劳导致自控力下降。整体波动幅度适中，说明表达习惯较为稳定。';
 
   // ---- 9. 历史对比 ----
   var histSessions = d.history.map(function(h) { return h.session; });
@@ -1301,38 +1166,37 @@ function render() {
     {
       priority: 'P1',
       title: '减少思考型口癖',
-      diagnosis: '<span class="fw">' + topFiller.word + '</span>出现' + topFiller.count + '次是最突出的口癖问题，<span class="fw">' + secondFiller.word + '</span>出现' + secondFiller.count + '次，<span class="fw">' + thirdFiller.word + '</span>' + thirdFiller.count + '次。核心口癖密度' + d.filler_words.core_density_per_1000 + '/千字，优秀水平应控制在15以下。延伸词中<span class="fw">' + topExtended.word + '</span>' + topExtended.count + '次、<span class="fw">' + secondExtended.word + '</span>' + secondExtended.count + '次同样需要关注。',
+      diagnosis: '<span class="fw">来去</span>出现169次是最突出的口癖问题，<span class="fw">呃</span>出现98次，<span class="fw">那个</span>52次。核心口癖密度23.6/千字，优秀水平应控制在15以下。延伸词中<span class="fw">这个</span>408次、<span class="fw">啊</span>371次同样需要关注。',
       actions: [
-        '<strong>录音自检法</strong>：每次表达后回听录音，用计数器统计<span class="fw">' + topFiller.word + '</span>和<span class="fw">' + secondFiller.word + '</span>的次数。意识是改变的第一步——大多数人根本没意识到自己说了多少次。',
-        '<strong>停顿替代法</strong>：当想说<span class="fw">' + topFiller.word + '</span>或<span class="fw">' + secondFiller.word + '</span>时，强迫自己闭嘴0.5秒。停顿比口癖更有力量，给听众留出思考空间。',
-        '<strong>关键句预演</strong>：对高频口癖词做标记，在正式表达前预演替换方案。用更精准的表达替代无意义的填充词。'
+        '<strong>录音自检法</strong>：每次表达后回听录音，用计数器统计<span class="fw">来去</span>和<span class="fw">呃</span>的次数。意识是改变的第一步——大多数人根本没意识到自己说了多少次。',
+        '<strong>停顿替代法</strong>：当想说<span class="fw">来去</span>或<span class="fw">呃</span>时，强迫自己闭嘴0.5秒。停顿比口癖更有力量，给听众留出思考空间。',
+        '<strong>关键句预演</strong>：对高频口癖词做标记，在正式表达前预演替换方案。例如把"来去"替换为"过去"或直接省略。'
       ],
-      expected: '预期效果：核心口癖密度 ' + d.filler_words.core_density_per_1000 + '→15以下，综合评分 +5分'
+      expected: '预期效果：核心口癖密度 23.6→15以下，综合评分 +5分'
     },
     {
       priority: 'P2',
       title: '控制语速波动',
-      diagnosis: '语速均值' + d.speech_rate.mean_cpm + '字/分偏快（推荐300-360），' + (poorTopics.length > 0 ? poorTopicNames + '的口癖密度分别高达' + poorTopicDensities + '/千字。' : '') + '收尾部分口癖密度最高，说明结尾时缺乏准备，容易想到什么说什么。',
+      diagnosis: '语速均值414字/分偏快（推荐300-360），AI工具讨论和收尾总结的口癖密度分别高达4.1和5.0/千字。收尾仅30秒却口癖密度最高，说明结尾时缺乏准备，容易想到什么说什么。',
       actions: [
         '<strong>预设结尾</strong>：提前准备好2-3种结尾话术，避免即兴发挥时口癖飙升。结尾是听众印象最深刻的部分，值得精心准备。',
         '<strong>语速锚点</strong>：在话题切换和结尾处刻意减速，给自己设定360字/分为目标语速。'
       ],
-      expected: '预期效果：语速合理性 ' + d.dimensions.speech_rate + '→82+，收尾口癖密度 -40%'
+      expected: '预期效果：语速合理性 72→82+，收尾口癖密度 -40%'
     },
     {
       priority: 'P3',
       title: '增强音量动态',
-      diagnosis: '音量动态范围' + d.acoustic.energy.dynamic_range_db + 'dB表现良好，但停顿以短停顿为主（80%），停顿中位数仅' + d.pauses.median_gap_sec + '秒（低于理想值1秒）。虽然碎片率' + fragRate + '%表现健康，但缺乏中长停顿会让听众缺少消化信息的时间，也削弱了关键观点的分量。',
+      diagnosis: '音量动态范围75.7dB表现良好，但停顿以短停顿为主（80%），停顿中位数仅0.4秒（低于理想值1秒）。虽然碎片率6.2%表现健康，但缺乏中长停顿会让听众缺少消化信息的时间，也削弱了关键观点的分量。',
       actions: [
         '<strong>三秒停顿法</strong>：每个主要观点说完后，强迫自己闭嘴3秒。这3秒看似漫长，但对听众来说是消化信息的黄金时间。',
         '<strong>结构化停顿</strong>：在话题切换、重要结论前、引用数据后这三个关键节点各停顿1-2秒，形成有节奏的表达韵律。'
       ],
-      expected: '预期效果：停顿控制 ' + d.dimensions.pause_control + '→88+，表达感染力显著提升'
+      expected: '预期效果：停顿控制 82→88+，表达感染力显著提升'
     }
   ];
 
   var sugContainer = document.getElementById('suggestionsContainer');
-  sugContainer.innerHTML = '';
   suggestions.forEach(function(s) {
     var pClass = s.priority === 'P1' ? '' : (s.priority === 'P2' ? 'p2' : 'p3');
     var actionsHtml = s.actions.map(function(a) { return '<li>' + a + '</li>'; }).join('');
@@ -1347,17 +1211,24 @@ function render() {
 
   // ---- 11. 改善路径 ----
   document.getElementById('improvementPath').innerHTML =
-    '短期（2-4周）录音自检控制高频口癖 → 中期（1-2月）预设结尾优化语速 → 长期（3月+）结构化停顿培养节奏感<br>如果核心口癖密度从' + d.filler_words.core_density_per_1000 + '降到15以下，综合评分预计提升5-8分。';
+    '短期（2-4周）录音自检控制高频口癖 → 中期（1-2月）预设结尾优化语速 → 长期（3月+）结构化停顿培养节奏感<br>如果核心口癖密度从23.6降到15以下，综合评分预计提升5-8分。';
 
   // ---- 12. Footer ----
-  document.getElementById('reportFooter').textContent = 'Livestream Expression Analyzer · ' + (isDemo ? 'Demo 报告' : '分析报告');
+  document.getElementById('reportFooter').textContent = '由 开口说Pro 生成 · Demo 报告';
 }
 
 // ============================================================
-// 窗口大小调整
+// Resize handler
 // ============================================================
 window.addEventListener('resize', function() {
   charts.forEach(function(c) { c.resize(); });
+});
+
+// ============================================================
+// Render on page load
+// ============================================================
+window.addEventListener('DOMContentLoaded', function() {
+  render();
 });
 </script>
 </body>
