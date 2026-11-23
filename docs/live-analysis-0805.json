@@ -6,7 +6,7 @@
     "target_speaking_ratio": 0.342,
     "analysis_timestamp": "2026-08-09 19:29:19"
   },
-  "overall_score": 80.1,
+  "overall_score": 84.6,
   "overall_level": "良好",
   "speakers": [
     "Speaker A",
@@ -536,7 +536,248 @@
       }
     ]
   },
-  "topic_segments": [],
-  "filler_hotspots": [],
-  "history": []
+  "topic_segments": [
+    {
+      "topic": "收尾总结(4)",
+      "time_range": "05:16-25:39",
+      "duration": "20:22",
+      "duration_sec": 1222,
+      "structure": "总结/收束",
+      "speaker_share": 24,
+      "filler_density": 4.4,
+      "rating": "需改进"
+    },
+    {
+      "topic": "话题9",
+      "time_range": "37:42-53:10",
+      "duration": "15:28",
+      "duration_sec": 928,
+      "structure": "案例/故事",
+      "speaker_share": 42,
+      "filler_density": 3.0,
+      "rating": "优秀"
+    },
+    {
+      "topic": "话题15",
+      "time_range": "76:41-85:25",
+      "duration": "08:44",
+      "duration_sec": 524,
+      "structure": "观点阐述",
+      "speaker_share": 52,
+      "filler_density": 3.5,
+      "rating": "良好"
+    },
+    {
+      "topic": "AI工具讨论",
+      "time_range": "53:03-60:19",
+      "duration": "07:16",
+      "duration_sec": 436,
+      "structure": "观点阐述",
+      "speaker_share": 61,
+      "filler_density": 2.3,
+      "rating": "优秀"
+    },
+    {
+      "topic": "话题11",
+      "time_range": "60:21-67:35",
+      "duration": "07:13",
+      "duration_sec": 433,
+      "structure": "观点阐述",
+      "speaker_share": 69,
+      "filler_density": 2.9,
+      "rating": "优秀"
+    },
+    {
+      "topic": "话题6",
+      "time_range": "26:39-32:21",
+      "duration": "05:43",
+      "duration_sec": 343,
+      "structure": "案例/故事",
+      "speaker_share": 20,
+      "filler_density": 3.6,
+      "rating": "良好"
+    },
+    {
+      "topic": "话题13",
+      "time_range": "71:49-76:05",
+      "duration": "04:15",
+      "duration_sec": 255,
+      "structure": "观点阐述",
+      "speaker_share": 83,
+      "filler_density": 3.6,
+      "rating": "良好"
+    },
+    {
+      "topic": "话题12",
+      "time_range": "67:38-71:48",
+      "duration": "04:10",
+      "duration_sec": 250,
+      "structure": "案例/故事",
+      "speaker_share": 30,
+      "filler_density": 4.2,
+      "rating": "需改进"
+    },
+    {
+      "topic": "话题7",
+      "time_range": "31:59-35:37",
+      "duration": "03:37",
+      "duration_sec": 217,
+      "structure": "观点阐述",
+      "speaker_share": 27,
+      "filler_density": 2.6,
+      "rating": "优秀"
+    },
+    {
+      "topic": "话题16",
+      "time_range": "85:31-88:51",
+      "duration": "03:20",
+      "duration_sec": 200,
+      "structure": "观点阐述",
+      "speaker_share": 92,
+      "filler_density": 3.7,
+      "rating": "良好"
+    }
+  ],
+  "filler_hotspots": [
+    {
+      "time_range": "00:00-10:00",
+      "density": 42.9,
+      "note": "极高"
+    },
+    {
+      "time_range": "10:00-20:00",
+      "density": 53.1,
+      "note": "极高（字数少放大）"
+    },
+    {
+      "time_range": "20:00-30:00",
+      "density": 37.3,
+      "note": "高"
+    },
+    {
+      "time_range": "30:00-40:00",
+      "density": 33.6,
+      "note": "高"
+    },
+    {
+      "time_range": "40:00-50:00",
+      "density": 29.1,
+      "note": "中"
+    },
+    {
+      "time_range": "50:00-60:00",
+      "density": 25.4,
+      "note": "中"
+    },
+    {
+      "time_range": "60:00-70:00",
+      "density": 29.1,
+      "note": "中高"
+    },
+    {
+      "time_range": "70:00-80:00",
+      "density": 32.9,
+      "note": "高"
+    },
+    {
+      "time_range": "80:00-90:00",
+      "density": 35.8,
+      "note": "高"
+    },
+    {
+      "time_range": "90:00-100:00",
+      "density": 30.0,
+      "note": "低（字数极少）"
+    }
+  ],
+  "history": [
+    {
+      "session": "0705",
+      "scene": "付费直播",
+      "date": "2026-07-05",
+      "duration_min": 70,
+      "core_density": 38.5,
+      "speech_rate": 404.3,
+      "fragmentation_rate": 0.084,
+      "clarity": null,
+      "overall_score": 80.8
+    },
+    {
+      "session": "0708",
+      "scene": "连麦",
+      "date": "2026-07-08",
+      "duration_min": 55,
+      "core_density": 41.6,
+      "speech_rate": 361.7,
+      "fragmentation_rate": 0.113,
+      "clarity": null,
+      "overall_score": 83.8
+    },
+    {
+      "session": "0712",
+      "scene": "单人直播",
+      "date": "2026-07-12",
+      "duration_min": 79,
+      "core_density": 23.6,
+      "speech_rate": 414.4,
+      "fragmentation_rate": 0.062,
+      "clarity": 99.98,
+      "overall_score": 85.0
+    },
+    {
+      "session": "0716",
+      "scene": "单人直播",
+      "date": "2026-07-16",
+      "duration_min": 72,
+      "core_density": 23.0,
+      "speech_rate": 384.6,
+      "fragmentation_rate": 0.198,
+      "clarity": 96.85,
+      "overall_score": 82.0
+    },
+    {
+      "session": "0717",
+      "scene": "单人直播",
+      "date": "2026-07-17",
+      "duration_min": 143,
+      "core_density": 24.6,
+      "speech_rate": 382.7,
+      "fragmentation_rate": 0.193,
+      "clarity": 77.83,
+      "overall_score": 78.6
+    },
+    {
+      "session": "0719",
+      "scene": "连麦",
+      "date": "2026-07-19",
+      "duration_min": 112,
+      "core_density": 28.3,
+      "speech_rate": 362.8,
+      "fragmentation_rate": 0.086,
+      "clarity": 99.89,
+      "overall_score": 86.3
+    },
+    {
+      "session": "0727",
+      "scene": "连麦",
+      "date": "2026-07-27",
+      "duration_min": 129,
+      "core_density": 26.0,
+      "speech_rate": 354.2,
+      "fragmentation_rate": 0.089,
+      "clarity": 99.65,
+      "overall_score": 87.9
+    },
+    {
+      "session": "0805",
+      "scene": "连麦",
+      "date": "2026-08-05",
+      "duration_min": 126,
+      "core_density": 33.3,
+      "speech_rate": 344.1,
+      "fragmentation_rate": 0.034,
+      "clarity": 97.49,
+      "overall_score": 84.6
+    }
+  ]
 }
